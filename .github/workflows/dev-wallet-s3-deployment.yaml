@@ -2,7 +2,7 @@ name: DEV S3 Deployment on the Piramal-OU Tekdi
 
 on: [push]
 jobs:
-  deploy_UAT:
+  deploy_Dev_wallet:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
