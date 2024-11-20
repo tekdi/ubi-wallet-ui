@@ -22,32 +22,33 @@ const ShareConfirmationDialog = ({ open, onClose, documentType, docId, file }) =
   const [showSuccess, setShowSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null); // State to track error message
   const apiUrl = import.meta.env.VITE_APP_API_URL;
-  const ssoId = '2fc2411c-a0c9-404d-a13a-408241e81fe2'; // Get SSO ID from local storage or another source
   
   const handleAccept = async () => {
     if (checked) {
       try {
         let response;
+        const authToken = localStorage.getItem('authToken');
 
         if (file) {
           const formData = new FormData();
-          formData.append('sso_id', ssoId);
+          // formData.append('sso_id', ssoId);
           formData.append('doc_type', documentType);
           formData.append('file', file);
 
           // API request for upload
           response = await axios.post(`${apiUrl}/user-docs`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { 'Content-Type': 'multipart/form-data',"Authorization": `Bearer ${authToken}` },
+            
           });
         } else {
           const data = new URLSearchParams();
-          data.append('sso_id', ssoId);
+          // data.append('sso_id', ssoId);
           data.append('doc_type', documentType);
           data.append('doc_id', docId);
 
           // API request for fetch
           response = await axios.post(`${apiUrl}/user-docs`, data.toString(), {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded',"Authorization": `Bearer ${authToken}` },
           });
         }
 

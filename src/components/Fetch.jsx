@@ -17,15 +17,15 @@ import DownloadIcon from "@mui/icons-material/Download";
 import ShareConfirmationDialog from "./ShareConfirmationDialog";
 import { Info } from "lucide-react";
 import { documentTypes } from "../config";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import Header from "./Header"; // Import Header component
-import BottomNavigationBar from "./BottomNavigationBar"; // Import Bottom Navigation Bar
+import { useNavigate } from "react-router-dom";
+import Header from "./Header";
+import BottomNavigationBar from "./BottomNavigationBar";
 
 const Fetch = ({ documentType, onDocumentTypeChange }) => {
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate hook for navigation
+  const navigate = useNavigate();
   const [selectedDocument, setSelectedDocument] = useState(documentType || "");
-  const [docId, setDocId] = useState(""); // Track document ID input
+  const [docId, setDocId] = useState("");
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -60,7 +60,7 @@ const Fetch = ({ documentType, onDocumentTypeChange }) => {
           </InputLabel>
           <Select
             value={selectedDocument}
-            onChange={(e) => setSelectedDocument(e.target.value)} // Update state when user selects a document type
+            onChange={(e) => setSelectedDocument(e.target.value)}
             label="Select Document Type"
             sx={{ fontFamily: "Poppins, sans-serif" }}
           >
@@ -84,8 +84,8 @@ const Fetch = ({ documentType, onDocumentTypeChange }) => {
           <TextField
             fullWidth
             placeholder="Paste Here"
-            value={docId} // Track the document ID input value
-            onChange={(e) => setDocId(e.target.value)} // Update document ID on change
+            value={docId}
+            onChange={(e) => setDocId(e.target.value)}
             helperText={
               <Box
                 sx={{
@@ -107,7 +107,7 @@ const Fetch = ({ documentType, onDocumentTypeChange }) => {
           variant="contained"
           fullWidth
           startIcon={<DownloadIcon />}
-          onClick={() => setOpen(true)} // Open dialog when button is clicked
+          onClick={() => setOpen(true)}
           sx={{ borderRadius: 7 }}
         >
           Fetch
@@ -117,8 +117,8 @@ const Fetch = ({ documentType, onDocumentTypeChange }) => {
         <ShareConfirmationDialog
           open={open}
           onClose={() => setOpen(false)}
-          documentType={selectedDocument} // Pass the selected document type as a prop
-          docId={docId} // Pass the document ID
+          documentType={selectedDocument}
+          docId={docId}
         />
       </Container>
 

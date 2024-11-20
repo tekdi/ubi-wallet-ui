@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  IconButton,
   Typography,
-  Button,
   FormControl,
-  InputLabel,
   Select,
-  MenuItem,
+  MenuItem,  
 } from "@mui/material";
-import LanguageIcon from "@mui/icons-material/Language";
 import { languages } from "../config";
+import SlideMenu from "./SlideMenu";
 const Header = () => {
   // Define the state to store selected language
   const [language, setLanguage] = useState("EN");
@@ -28,10 +25,8 @@ const Header = () => {
       sx={{ bgcolor: "#EDEFFF" }}
     >
       <Toolbar>
-        {/* Menu Icon (Uncommented for use) */}
-        {/* <IconButton edge="start">
-          <MenuIcon />
-        </IconButton> */}
+        {/* Menu */}
+        <SlideMenu/>
 
         {/* E-Wallet Title */}
         <Typography
@@ -51,9 +46,9 @@ const Header = () => {
           sx={{
             m: 1,
             px:2,
-            minWidth: 30, // Adjust this based on your layout
-            border: "2px solid black", // Add border around the FormControl
-            borderRadius: "8px", // Optional: adds rounded corners
+            minWidth: 30,
+            border: "2px solid black",
+            borderRadius: "8px",
           }}
           variant="standard"
         >
