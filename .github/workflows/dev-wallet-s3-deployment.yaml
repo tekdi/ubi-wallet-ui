@@ -53,7 +53,7 @@ jobs:
       - name: Upload to s3 Bucket
         run: |
               aws s3 sync dist s3://${{ secrets.AWS_S3_BUCKET_DEV }}/
-          ###########    aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }} --paths "/*"
+              aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }} --paths "/*"
       - name: Post job cleanup
         run: |
     # Cleanup commands
