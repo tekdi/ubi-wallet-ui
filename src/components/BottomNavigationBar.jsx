@@ -13,9 +13,9 @@ const BottomNavigationBar = () => {
       left: 0,
       right: 0,
       bgcolor: 'background.paper',
-      borderTop: '1px solid #ddd', // Optional: Adds a separator line at the top of the nav
-      boxShadow: 3, // Optional: Adds a subtle shadow at the top
-      paddingY: 1, // Adds vertical padding to space out the icons
+      borderTop: '1px solid #ddd', 
+      boxShadow: 3, 
+      paddingY: 1,
       display: 'flex',
       justifyContent: 'space-around',
       alignItems: 'center',

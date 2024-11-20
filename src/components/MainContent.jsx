@@ -19,25 +19,24 @@ const MainContent = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const sso_id = "2fc2411c-a0c9-404d-a13a-408241e81fe2"; //get it from local storage
   useEffect(() => {
     const fetchDocuments = async () => {
       // Retrieve the auth token from localStorage
-    //   const authToken = localStorage.getItem("authToken"); // Replace with your actual key in localStorage
+      const authToken = localStorage.getItem("authToken");
 
-    //   if (!authToken) {
-    //     setError("No authorization token found.");
-    //     setLoading(false);
-    //     return;
-    //   }
+      if (!authToken) {
+        setError("No authorization token found.");
+        setLoading(false);
+        return;
+      }
 
-      const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch/${sso_id}`;
+      const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch`;
 
       try {
         const response = await fetch(apiUrl, {
           method: "GET",
           headers: {
-            // "Authorization": `Bearer ${authToken}`,
+            "Authorization": `Bearer ${authToken}`,
             "Content-Type": "application/json",
           },
         });
@@ -47,7 +46,7 @@ const MainContent = () => {
         }
 
         const data = await response.json();
-        setDocuments(data);  // Assuming the response is an array of documents
+        setDocuments(data);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -55,7 +54,7 @@ const MainContent = () => {
       }
     };
 
-    fetchDocuments();  // Call the function when the component mounts
+    fetchDocuments();
   }, []); 
 
   if (documents.length>0) {

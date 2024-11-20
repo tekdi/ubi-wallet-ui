@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import LanguageSelect from './components/LanguageSelect';
@@ -6,36 +5,12 @@ import Login from './components/Login';
 import Home from './components/Home';
 import Upload from './components/Upload';
 import Fetch from './components/Fetch';
+import DocumentSelector from './components/DocumentSelector';
 import { 
   ThemeProvider, 
   createTheme, 
-  Box, 
-  Container,
-  Typography,
-  Select,
-  MenuItem,
-  Button,
-  TextField,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Paper,
-  Grid,
-  FormControl,
-  InputLabel
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import {
-  Menu as MenuIcon,
-  Language as LanguageIcon,
-  ArrowBack as ArrowBackIcon,
-  Add as AddIcon,
-  Home as HomeIcon,
-  History as HistoryIcon,
-  Group as GroupIcon
-} from '@mui/icons-material';
-
-
+import PrivateRoute from './components/PrivateRoute';
 // Create theme
 const theme = createTheme({
   palette: {
@@ -67,16 +42,17 @@ const theme = createTheme({
 
 const App = () => {
   return (
-
+    
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LanguageSelect />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/upload" element={<Upload />} />
-          <Route path="/fetch" element={<Fetch />} />
+          {/* <Route path="/login" element={<Login />} /> */}
+          <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path="/upload" element={<PrivateRoute><Upload /></PrivateRoute>} />
+          <Route path="/fetch" element={<PrivateRoute><Fetch /></PrivateRoute>} />
+          <Route path="/select-docs" element={<PrivateRoute><DocumentSelector /></PrivateRoute>} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

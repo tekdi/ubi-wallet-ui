@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "@fontsource/poppins";
 import {
   Box,
@@ -10,22 +10,54 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import icon from "../assets/icon.svg";
 import { languageOptions } from "../config";
+import { useKeycloak } from "@react-keycloak/web";
+import {jwtDecode} from 'jwt-decode'; // Fixed import
 
 const LanguageSelect = () => {
+  const { keycloak, initialized } = useKeycloak();
+  const location = useLocation();
   const navigate = useNavigate();
   const [language, setLanguage] = useState("English");
+  if(localStorage.getItem('logout')) {
+    localStorage.clear();
+  }
+
+  // Handle redirect after successful login
+  useEffect(() => {
+    
+    if (initialized && keycloak.authenticated) {
+      const decoded = jwtDecode(keycloak.token);
+
+      // Save authentication info in localStorage
+      localStorage.setItem("authToken", keycloak.token);
+      localStorage.setItem("ssoid", decoded.sub);
+
+
+      const redirectUrl = localStorage.getItem('login-redirect') || '/home';
+      navigate(redirectUrl);
+    }
+  }, [ keycloak?.authenticated, navigate, location.state]);
+
+  // Handle the login process
+  const handleLogin = async () => {
+    try {
+      await keycloak.login();
+    } catch (error) {
+      console.error("Login failed:", error instanceof Error ? error.message : "Unknown error");
+    }
+  };
 
   return (
     <Box
       sx={{
-        minHeight: "100dvh", // Ensure the container takes up the full viewport height
+        minHeight: "100dvh",
         bgcolor: "#121943",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between", // To make sure content is evenly spaced
+        justifyContent: "space-between",
       }}
     >
       {/* Header Section */}
@@ -43,9 +75,9 @@ const LanguageSelect = () => {
         <Box
           sx={{
             display: "flex",
-            alignItems: "center", // Vertically align items
-            justifyContent: "center", // Horizontally center the content
-            gap: 2, // Space between the image and the text
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
           }}
         >
           <Box
@@ -117,7 +149,7 @@ const LanguageSelect = () => {
           variant="contained"
           fullWidth
           size="large"
-          onClick={() => navigate("/login")}
+          onClick={handleLogin}
           sx={{ borderRadius: 7 }}
         >
           Log In to E-Wallet
