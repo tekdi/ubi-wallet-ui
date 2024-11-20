@@ -1,4 +1,3 @@
-// FloatingActionButton.jsx
 import React, { useState } from "react";
 import { Box, IconButton, Popover, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +5,7 @@ import Add from "../assets/FAB.svg";
 import { Download, Upload } from "lucide-react";
 const FloatingActionButton = () => {
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = useState(null); // State for managing Popover visibility
+  const [anchorEl, setAnchorEl] = useState(null);
 
   // Handle opening of Popover
   const handleClick = (event) => {
@@ -53,11 +52,10 @@ const FloatingActionButton = () => {
               mb: 1,
               color: "black",
               fontSize: 16,
-              justifyContent: "flex-start", // Aligns content to the left
-              textAlign: "left", // Ensures text and icon are aligned left
+              justifyContent: "flex-start",
+              textAlign: "left",
               paddingLeft: 2,
               gap:3
-              // Adjusts the left padding if needed
             }}
           >
             Upload
@@ -69,10 +67,10 @@ const FloatingActionButton = () => {
             sx={{
               color: "black",
               fontSize: 16,
-              justifyContent: "flex-start", // Aligns content to the left
-              textAlign: "left", // Ensures text and icon are aligned left
+              justifyContent: "flex-start",
+              textAlign: "left",
               paddingLeft: 2, 
-              gap:3// Adjusts the left padding if needed
+              gap:3
             }}
           >
             Fetch

@@ -16,8 +16,10 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { MuiOtpInput } from 'mui-one-time-password-input';
 import Header from './Header';
+import { useKeycloak } from "@react-keycloak/web";
 
 const Login = () => {
+  const { keycloak } = useKeycloak();
   const navigate = useNavigate();
   const [phone, setPhone] = useState(''); // Store phone number without country code
   const [otp, setOtp] = useState('');
@@ -92,6 +94,7 @@ const Login = () => {
     // Basic validation before proceeding
     if (!error.phone && !error.otp && phone && otp.length === 6) {
       const fullPhoneNumber = `+91${phone}`;
+      keycloak.login()
 
       // Proceed with login logic (Navigate or call API)
       navigate('/home');

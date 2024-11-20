@@ -15,7 +15,7 @@ import {
   import ArrowBackIcon from "@mui/icons-material/ArrowBack";
   import UploadFileIcon from "@mui/icons-material/UploadFile";
   import ShareConfirmationDialog from "./ShareConfirmationDialog";
-  import { documentTypes } from "../config"; // Assuming document types are imported from config
+  import { documentTypes } from "../config";
   import Header from "./Header";
   import BottomNavigationBar from "./BottomNavigationBar";
   import { useNavigate } from "react-router-dom";
