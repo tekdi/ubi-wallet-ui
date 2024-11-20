@@ -2,16 +2,11 @@ import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  IconButton,
   Typography,
-  Button,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,  
 } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
-import LanguageIcon from "@mui/icons-material/Language";
 import { languages } from "../config";
 import SlideMenu from "./SlideMenu";
 const Header = () => {

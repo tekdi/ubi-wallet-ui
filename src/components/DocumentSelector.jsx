@@ -29,8 +29,6 @@ const StyledSearchBox = styled(Paper)(({ theme }) => ({
 const DocumentSelector = () => {
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const handleToggle = (id) => {
     const currentIndex = selectedDocs.indexOf(id);
@@ -47,11 +45,12 @@ const DocumentSelector = () => {
 
   const handleImportClick = () => {
     const selectedDocuments = documents.filter(doc => selectedDocs.includes(doc.doc_id));
+    const parentAppOrigin = import.meta.env.VITE_PARENT_APP_ORIGIN;
     
     console.log('Selected Documents:', selectedDocuments);
     window.parent.postMessage(
       { type: 'selected-docs', data: selectedDocuments },
-      '*'
+      parentAppOrigin
     );
   };
 
@@ -75,10 +74,8 @@ const DocumentSelector = () => {
 
         const data = await response.json();
         setDocuments(data);
-        setLoading(false);
       } catch (err) {
-        setError(err.message);
-        setLoading(false);
+        console.error("Error fetching documents:", err.message);
       }
     };
 

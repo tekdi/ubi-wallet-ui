@@ -22,7 +22,6 @@ const ShareConfirmationDialog = ({ open, onClose, documentType, docId, file }) =
   const [showSuccess, setShowSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null); // State to track error message
   const apiUrl = import.meta.env.VITE_APP_API_URL;
-  const ssoId = localStorage.getItem('ssoid'); // Get SSO ID from local storage or another source
   
   const handleAccept = async () => {
     if (checked) {

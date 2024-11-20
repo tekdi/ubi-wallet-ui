@@ -4,7 +4,7 @@ import { useKeycloak } from "@react-keycloak/web";
 const PrivateRoute = ({ children }) => {
   // const isLoggedIn = localStorage.getItem("authToken");
   const navigate = useNavigate();
-  const { keycloak, initialized } = useKeycloak();
+  const { keycloak } = useKeycloak();
   const location = useLocation();
   const isLoggedIn = keycloak.authenticated;
 

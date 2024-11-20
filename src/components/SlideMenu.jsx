@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Drawer, List, ListItem, ListItemText, Divider, IconButton, Avatar } from '@mui/material';
+import { Drawer, List, ListItem, ListItemText, Divider, IconButton, Avatar ,ListItemIcon} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
+import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { Box } from '@mui/system';
 import { useKeycloak } from "@react-keycloak/web";
 
@@ -31,21 +33,22 @@ const SlideMenu = () => {
 
       {/* Drawer component */}
       <Drawer anchor="left" open={open} onClose={toggleDrawer}>
-        <Box
-          sx={{ width: 250 }} 
-          role="presentation"
-          onClick={toggleDrawer} 
-        >
+        <Box sx={{ width: 230,fontFamily:'Poppins, sans-serif' }} role="presentation" onClick={toggleDrawer}>
           <List>
             {/* User Profile Section */}
             <ListItem button>
-              <Avatar alt="User Name" src="https://via.placeholder.com/40" sx={{ marginRight: 2 }} />
+            <ListItemIcon>
+            <PermIdentityOutlinedIcon/>
+              </ListItemIcon>
               <ListItemText primary="User Profile" />
             </ListItem>
             <Divider />
 
             {/* Logout Section */}
             <ListItem button onClick={handleLogout}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
               <ListItemText primary="Logout" />
             </ListItem>
           </List>
