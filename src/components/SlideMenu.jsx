@@ -17,7 +17,7 @@ const SlideMenu = () => {
 
 
   const handleLogout = () => {
-    keycloak.logout();
+    keycloak.logout({redirectUri:window.location.origin,});  // Redirects to home after logout
     localStorage.clear();
     localStorage.setItem('logout',true);
      // Logout from Keycloak
