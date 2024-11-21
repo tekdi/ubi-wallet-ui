@@ -29,20 +29,23 @@ const StyledSearchBox = styled(Paper)(({ theme }) => ({
 const DocumentSelector = () => {
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
 
+  // Handle document selection toggle
   const handleToggle = (id) => {
     const currentIndex = selectedDocs.indexOf(id);
     const newChecked = [...selectedDocs];
 
     if (currentIndex === -1) {
-      newChecked.push(id);  // Add the ID to selectedDocs if not already selected
+      newChecked.push(id);
     } else {
-      newChecked.splice(currentIndex, 1);  // Remove the ID if already selected
+      newChecked.splice(currentIndex, 1);
     }
 
     setSelectedDocs(newChecked);
   };
 
+  // Handle import button click to send selected documents to parent app
   const handleImportClick = () => {
     const selectedDocuments = documents.filter(doc => selectedDocs.includes(doc.doc_id));
     const parentAppOrigin = import.meta.env.VITE_PARENT_APP_ORIGIN;
@@ -54,10 +57,15 @@ const DocumentSelector = () => {
     );
   };
 
+  // Fetch documents after the token is available
   useEffect(() => {
     const fetchDocuments = async () => {
       const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch`;
-      const authToken = localStorage.getItem("authToken");
+
+      if (!authToken) {
+        console.warn("Auth token not found, waiting for parent app to provide token...");
+        return;
+      }
 
       try {
         const response = await fetch(apiUrl, {
@@ -79,7 +87,26 @@ const DocumentSelector = () => {
       }
     };
 
-    fetchDocuments();
+    if (authToken) {
+      fetchDocuments();
+    }
+  }, [authToken]);
+
+  useEffect(() => {
+    const messageListener = (event) => {
+      const data = event.data;
+      if (data.type === 'JWT_TOKEN' && data.payload) {
+        const jwtToken = data.payload;
+        localStorage.setItem('authToken', jwtToken);
+        setAuthToken(jwtToken); 
+      }
+    };
+
+    window.addEventListener('message', messageListener);
+
+    return () => {
+      window.removeEventListener('message', messageListener);
+    };
   }, []);
 
   return (
@@ -92,7 +119,7 @@ const DocumentSelector = () => {
       }}
     >
       {/* Header */}
-      <Header />
+      {/* <Header /> */}
 
       <Container maxWidth="sm" sx={{ mt: 2 }}>
         {/* Search Box */}
@@ -129,7 +156,7 @@ const DocumentSelector = () => {
                 }}
               >
                 <ListItemText
-                  primary={doc.doc_type}
+                  primary={doc.doc_name}
                   secondary={doc.doc_id}
                   sx={{ flexGrow: 1 }}
                 />
@@ -160,7 +187,7 @@ const DocumentSelector = () => {
         </Button>
 
         {/* Bottom Navigation */}
-        <BottomNavigationBar />
+        {/* <BottomNavigationBar /> */}
       </Container>
     </Box>
   );
