@@ -21,11 +21,39 @@ import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import BottomNavigationBar from "./BottomNavigationBar";
 
-const Fetch = ({ documentType, onDocumentTypeChange }) => {
+const Fetch = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const [selectedDocument, setSelectedDocument] = useState(documentType || "");
+  const [selectedDocument, setSelectedDocument] = useState(null);
   const [docId, setDocId] = useState("");
+  const [errors, setErrors] = useState({ documentType: "", docId: "" });
+
+  // Handle document selection
+  const handleDocumentChange = (e) => {
+    const selected = e.target.value;
+    const selectedDoc = documentTypes.find((doc) => doc.value === selected);
+    setSelectedDocument(selectedDoc);
+  };
+
+  const handleFetch = () => {
+    let formErrors = { documentType: "", docId: "" };
+
+    // Validate document type and document ID
+    if (!selectedDocument) {
+      formErrors.documentType = "Document type is required.";
+    }
+
+    if (!docId) {
+      formErrors.docId = "Document ID is required.";
+    }
+
+    setErrors(formErrors);
+
+    // Proceed only if no errors
+    if (!formErrors.documentType && !formErrors.docId) {
+      setOpen(true); // Open the confirmation dialog
+    }
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -54,13 +82,13 @@ const Fetch = ({ documentType, onDocumentTypeChange }) => {
           Select Document Type
         </Typography>
 
-        <FormControl fullWidth sx={{ my: 2 }}>
+        <FormControl fullWidth sx={{ my: 2 }} error={Boolean(errors.documentType)}>
           <InputLabel sx={{ fontFamily: "Poppins, sans-serif" }}>
             Select Document Type
           </InputLabel>
           <Select
-            value={selectedDocument}
-            onChange={(e) => setSelectedDocument(e.target.value)}
+            value={selectedDocument?.value || ""}
+            onChange={handleDocumentChange}
             label="Select Document Type"
             sx={{ fontFamily: "Poppins, sans-serif" }}
           >
@@ -70,6 +98,9 @@ const Fetch = ({ documentType, onDocumentTypeChange }) => {
               </MenuItem>
             ))}
           </Select>
+          {errors.documentType && (
+            <FormHelperText>{errors.documentType}</FormHelperText>
+          )}
         </FormControl>
 
         {/* Document ID Input */}
@@ -86,39 +117,45 @@ const Fetch = ({ documentType, onDocumentTypeChange }) => {
             placeholder="Paste Here"
             value={docId}
             onChange={(e) => setDocId(e.target.value)}
+            error={Boolean(errors.docId)}
             helperText={
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  fontFamily: "Poppins, sans-serif",
-                }}
-              >
-                <Info />
-                <FormHelperText sx={{ ml: 0.4 }}>
-                  Hint Text: Where this ID can be found
-                </FormHelperText>
-              </Box>
+              errors.docId && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    fontFamily: "Poppins, sans-serif",
+                  }}
+                >
+                  <Info />
+                  <FormHelperText sx={{ ml: 0.4 }}>
+                    Hint Text: Where this ID can be found
+                  </FormHelperText>
+                </Box>
+              )
             }
           />
         </Box>
 
+        {/* Fetch Button */}
         <Button
           variant="contained"
           fullWidth
           startIcon={<DownloadIcon />}
-          onClick={() => setOpen(true)}
+          onClick={handleFetch} // Trigger fetch only if valid
           sx={{ borderRadius: 7 }}
         >
           Fetch
         </Button>
 
-        {/* Confirmation Dialog */}
+        {/* ShareConfirmationDialog with necessary props */}
         <ShareConfirmationDialog
           open={open}
           onClose={() => setOpen(false)}
-          documentType={selectedDocument}
-          docId={docId}
+          documentType={selectedDocument?.doc_type}  // Passing the document type
+          documentSubType={selectedDocument?.doc_subtype} // Passing the document subtype
+          documentName={selectedDocument?.value}  // Passing the document name
+          docId={docId}  // Passing the document ID
         />
       </Container>
 

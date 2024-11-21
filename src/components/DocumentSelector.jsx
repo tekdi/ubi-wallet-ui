@@ -27,26 +27,27 @@ const StyledSearchBox = styled(Paper)(({ theme }) => ({
 }));
 
 const DocumentSelector = () => {
-  const [selectedDocs, setSelectedDocs] = useState([]);
+  const [selectedDocs, setSelectedDocs] = useState(new Set());  // Use Set for selected documents
   const [documents, setDocuments] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [error, setError] = useState(null);  // Error state for displaying API errors
 
+  // Handle document selection
   const handleToggle = (id) => {
-    const currentIndex = selectedDocs.indexOf(id);
-    const newChecked = [...selectedDocs];
-
-    if (currentIndex === -1) {
-      newChecked.push(id);  // Add the ID to selectedDocs if not already selected
+    const newSelectedDocs = new Set(selectedDocs); // Create a new Set to maintain immutability
+    if (newSelectedDocs.has(id)) {
+      newSelectedDocs.delete(id);
     } else {
-      newChecked.splice(currentIndex, 1);  // Remove the ID if already selected
+      newSelectedDocs.add(id);
     }
-
-    setSelectedDocs(newChecked);
+    setSelectedDocs(newSelectedDocs);
   };
 
+  // Handle the import button click
   const handleImportClick = () => {
-    const selectedDocuments = documents.filter(doc => selectedDocs.includes(doc.doc_id));
+    const selectedDocuments = documents.filter(doc => selectedDocs.has(doc.doc_id));
     const parentAppOrigin = import.meta.env.VITE_PARENT_APP_ORIGIN;
-    
+
     console.log('Selected Documents:', selectedDocuments);
     window.parent.postMessage(
       { type: 'selected-docs', data: selectedDocuments },
@@ -54,6 +55,7 @@ const DocumentSelector = () => {
     );
   };
 
+  // Fetch documents from API
   useEffect(() => {
     const fetchDocuments = async () => {
       const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch`;
@@ -64,7 +66,7 @@ const DocumentSelector = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${authToken}`
+            "Authorization": `Bearer ${authToken}`,
           },
         });
 
@@ -76,11 +78,22 @@ const DocumentSelector = () => {
         setDocuments(data);
       } catch (err) {
         console.error("Error fetching documents:", err.message);
+        setError('Error fetching documents. Please try again later.');
       }
     };
 
     fetchDocuments();
   }, []);
+
+  // Handle search input change
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter documents based on search query
+  const filteredDocuments = documents.filter(doc =>
+    doc.doc_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <Box
@@ -101,6 +114,8 @@ const DocumentSelector = () => {
             fullWidth
             placeholder="Search By Document Name"
             variant="standard"
+            value={searchQuery}
+            onChange={handleSearchChange}  // Attach search change handler
             InputProps={{
               disableUnderline: true,
               endAdornment: (
@@ -111,13 +126,20 @@ const DocumentSelector = () => {
           />
         </StyledSearchBox>
 
+        {/* Error Handling */}
+        {error && (
+          <Typography color="error" variant="body2" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
+
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Please choose your required document.
         </Typography>
 
         {/* Document List */}
         <List>
-          {documents.map((doc) => (
+          {filteredDocuments.map((doc) => (
             <ListItem key={doc.doc_id} disablePadding sx={{ mb: 1 }}>
               <Box
                 sx={{
@@ -129,13 +151,13 @@ const DocumentSelector = () => {
                 }}
               >
                 <ListItemText
-                  primary={doc.doc_type}
+                  primary={doc.doc_name}
                   secondary={doc.doc_id}
                   sx={{ flexGrow: 1 }}
                 />
                 <Checkbox
                   edge="end"
-                  checked={selectedDocs.indexOf(doc.doc_id) !== -1}
+                  checked={selectedDocs.has(doc.doc_id)}  // Use Set for checking selection
                   onChange={() => handleToggle(doc.doc_id)}
                 />
               </Box>
@@ -153,10 +175,10 @@ const DocumentSelector = () => {
             textTransform: "none",
             borderRadius: 2,
           }}
-          disabled={selectedDocs.length === 0}
+          disabled={selectedDocs.size === 0}  // Disable button if no documents are selected
           onClick={handleImportClick}
         >
-          + Import Documents ({selectedDocs.length})
+          + Import Documents ({selectedDocs.size})
         </Button>
 
         {/* Bottom Navigation */}

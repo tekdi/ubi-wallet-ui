@@ -1,17 +1,19 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
+import { useEffect } from "react";
 
 const PrivateRoute = ({ children }) => {
-  // const isLoggedIn = localStorage.getItem("authToken");
   const navigate = useNavigate();
   const { keycloak } = useKeycloak();
   const location = useLocation();
   const isLoggedIn = keycloak.authenticated;
 
-  if (!isLoggedIn) {
-    localStorage.setItem("login-redirect", location.pathname);
-    navigate("/"); 
-  }
+  useEffect(() => {
+    if (!isLoggedIn) {
+      localStorage.setItem("login-redirect", location.pathname); // Store the current location to redirect after login
+      navigate("/"); // Redirect to the login page
+    }
+  }, [isLoggedIn, location.pathname, navigate]); // The effect depends on isLoggedIn, location.pathname, and navigate
 
   return children; // Render the children if authenticated
 };

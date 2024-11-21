@@ -17,11 +17,11 @@ const SlideMenu = () => {
 
 
   const handleLogout = () => {
-    keycloak.logout();
+    keycloak.logout({ redirectUri: window.location.origin });
     localStorage.clear();
     localStorage.setItem('logout',true);
      // Logout from Keycloak
-    console.log('Logging out...');
+    console.log('Logging out...',window.location.origin);
   };
 
   return (

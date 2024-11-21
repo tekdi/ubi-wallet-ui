@@ -16,7 +16,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const ShareConfirmationDialog = ({ open, onClose, documentType, docId, file }) => {
+const ShareConfirmationDialog = ({ open, onClose, documentType,documentSubType,documentName, docId, file }) => {
   const navigate = useNavigate();
   const [checked, setChecked] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -28,11 +28,13 @@ const ShareConfirmationDialog = ({ open, onClose, documentType, docId, file }) =
       try {
         let response;
         const authToken = localStorage.getItem('authToken');
+        console.log(documentType,documentSubType,documentName)
 
         if (file) {
           const formData = new FormData();
-          // formData.append('sso_id', ssoId);
           formData.append('doc_type', documentType);
+          formData.append('doc_subtype', documentSubType);
+          formData.append('doc_name',documentName);
           formData.append('file', file);
 
           // API request for upload
@@ -44,6 +46,8 @@ const ShareConfirmationDialog = ({ open, onClose, documentType, docId, file }) =
           const data = new URLSearchParams();
           // data.append('sso_id', ssoId);
           data.append('doc_type', documentType);
+          data.append('doc_subtype', documentSubType);
+          data.append('doc_name',documentName);
           data.append('doc_id', docId);
 
           // API request for fetch
@@ -105,7 +109,7 @@ const ShareConfirmationDialog = ({ open, onClose, documentType, docId, file }) =
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <FormControlLabel
             control={<Checkbox checked={checked} onChange={handleCheckboxChange} />}
-            label={documentType}
+            label={documentName}
           />
         </Box>
       </DialogContent>
@@ -144,7 +148,7 @@ const ShareConfirmationDialog = ({ open, onClose, documentType, docId, file }) =
       }}>
         <Typography variant="h6" sx={{ mb: 3, fontFamily: 'Poppins, sans-serif' }}>
           Your <Typography component="span" color="primary" variant="h6" sx={{ fontFamily: 'Poppins, sans-serif' }}>
-            {documentType}
+            {documentName}
           </Typography> has been added to your documents set in the E-Wallet!
         </Typography>
 
