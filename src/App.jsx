@@ -52,7 +52,7 @@ const App = () => {
           <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/upload" element={<PrivateRoute><Upload /></PrivateRoute>} />
           <Route path="/fetch" element={<PrivateRoute><Fetch /></PrivateRoute>} />
-          <Route path="/select-docs" element={<PrivateRoute><DocumentSelector /></PrivateRoute>} />
+          <Route path="/select-docs" element={<DocumentSelector />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

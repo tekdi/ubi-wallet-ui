@@ -8,12 +8,10 @@ const PrivateRoute = ({ children }) => {
   const location = useLocation();
   const isLoggedIn = keycloak.authenticated;
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      localStorage.setItem("login-redirect", location.pathname); // Store the current location to redirect after login
-      navigate("/"); // Redirect to the login page
-    }
-  }, [isLoggedIn, location.pathname, navigate]); // The effect depends on isLoggedIn, location.pathname, and navigate
+  if (!isLoggedIn || localStorage.getItem('authToken') == undefined ) {
+    localStorage.setItem("login-redirect", location.pathname);
+    navigate("/"); 
+  }
 
   return children; // Render the children if authenticated
 };

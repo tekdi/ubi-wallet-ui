@@ -44,7 +44,6 @@ const ShareConfirmationDialog = ({ open, onClose, documentType,documentSubType,d
           });
         } else {
           const data = new URLSearchParams();
-          // data.append('sso_id', ssoId);
           data.append('doc_type', documentType);
           data.append('doc_subtype', documentSubType);
           data.append('doc_name',documentName);

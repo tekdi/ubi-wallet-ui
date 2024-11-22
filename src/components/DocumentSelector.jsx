@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import BottomNavigationBar from './BottomNavigationBar';
-import {
-  Box,
-  Container,
-  Typography,
-  TextField,
-  List,
-  ListItem,
-  ListItemText,
-  Checkbox,
-  Button,
-  Paper
-} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Box, Container, Typography, TextField, List, ListItem, ListItemText, Checkbox, Button, Paper } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
@@ -27,18 +17,20 @@ const StyledSearchBox = styled(Paper)(({ theme }) => ({
 }));
 
 const DocumentSelector = () => {
-  const [selectedDocs, setSelectedDocs] = useState(new Set());  // Use Set for selected documents
+  const navigate = useNavigate();
+  const [selectedDocs, setSelectedDocs] = useState([]);
   const [documents, setDocuments] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [error, setError] = useState(null);  // Error state for displaying API errors
-
-  // Handle document selection
+  const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
+  const [isTokenReceived, setIsTokenReceived] = useState(false);
+  const isEmbedded = window.self !== window.top;
   const handleToggle = (id) => {
-    const newSelectedDocs = new Set(selectedDocs); // Create a new Set to maintain immutability
-    if (newSelectedDocs.has(id)) {
-      newSelectedDocs.delete(id);
+    const currentIndex = selectedDocs.indexOf(id);
+    const newChecked = [...selectedDocs];
+
+    if (currentIndex === -1) {
+      newChecked.push(id);
     } else {
-      newSelectedDocs.add(id);
+      newChecked.splice(currentIndex, 1);
     }
     setSelectedDocs(newSelectedDocs);
   };
@@ -59,7 +51,11 @@ const DocumentSelector = () => {
   useEffect(() => {
     const fetchDocuments = async () => {
       const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch`;
-      const authToken = localStorage.getItem("authToken");
+
+      if (!authToken) {
+        console.warn("Auth token not found, waiting for parent app to provide token...");
+        return;
+      }
 
       try {
         const response = await fetch(apiUrl, {
@@ -82,8 +78,39 @@ const DocumentSelector = () => {
       }
     };
 
-    fetchDocuments();
-  }, []);
+    if (authToken) {
+      fetchDocuments();
+    }
+  }, [authToken]);
+
+  useEffect(() => {
+    if (!isEmbedded) return;
+
+    const messageListener = (event) => {
+      const data = event.data;
+      if (data.type === 'JWT_TOKEN' && data.payload) {
+        const jwtToken = data.payload;
+        console.log("Received JWT Token from parent:", jwtToken);
+        localStorage.setItem('authToken', jwtToken);
+        setAuthToken(jwtToken);
+        setIsTokenReceived(true);
+      }
+    };
+
+    window.addEventListener('message', messageListener);
+
+    return () => {
+      window.removeEventListener('message', messageListener);
+    };
+  }, [isEmbedded]);
+
+  useEffect(() => {
+    if (isEmbedded) return;
+    if (!authToken && !isTokenReceived) {
+      localStorage.setItem("login-redirect", window.location.pathname);
+      navigate('/');
+    }
+  }, [authToken, isTokenReceived, isEmbedded, navigate]);
 
   // Handle search input change
   const handleSearchChange = (event) => {
@@ -104,9 +131,7 @@ const DocumentSelector = () => {
         fontFamily: "Poppins, sans-serif",
       }}
     >
-      {/* Header */}
       <Header />
-
       <Container maxWidth="sm" sx={{ mt: 2 }}>
         {/* Search Box */}
         <StyledSearchBox>
@@ -180,10 +205,8 @@ const DocumentSelector = () => {
         >
           + Import Documents ({selectedDocs.size})
         </Button>
-
-        {/* Bottom Navigation */}
-        <BottomNavigationBar />
       </Container>
+      <BottomNavigationBar/>
     </Box>
   );
 };
