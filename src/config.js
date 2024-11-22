@@ -1,9 +1,60 @@
 export const documentTypes = [
-    { value: "PAN Card", label: "PAN Card" },
-    { value: "Aadhaar Card", label: "Aadhaar Card" },
-    { value: "Marksheet", label: "Marksheet" },
-    // Add other document types here
-];
+    { 
+      value: "Aadhaar Card", 
+      label: "Aadhaar Card", 
+      doc_type: "idProof", 
+      doc_subtype: "aadhaar" 
+    },
+    { 
+      value: "Jan Aadhaar for (Domicile information)", 
+      label: "Jan Aadhaar for (Domicile information)", 
+      doc_type: "domicileProof", 
+      doc_subtype: "domicileCertificate" 
+    },
+    { 
+      value: "Caste Certificate", 
+      label: "Caste Certificate", 
+      doc_type: "casteProof", 
+      doc_subtype: "casteCertificate" 
+    },
+    { 
+      value: "Income Certificate", 
+      label: "Income Certificate", 
+      doc_type: "incomeProof", 
+      doc_subtype: "incomeCertificate" 
+    },
+    { 
+      value: "Enrolment Certificate (with hosteller/day scholar information)", 
+      label: "Enrolment Certificate (with hosteller/day scholar information)", 
+      doc_type: "associationProof", 
+      doc_subtype: "enrolmentCertificate" 
+    },
+    { 
+      value: "Marksheet", 
+      label: "Marksheet", 
+      doc_type: "marksProof", 
+      doc_subtype: "marksheet" 
+    },
+    { 
+      value: "Disability Certificate", 
+      label: "Disability Certificate", 
+      doc_type: "disabilityProof", 
+      doc_subtype: "disabilityCertificate" 
+    },
+    { 
+      value: "Sports Competition participation certificate", 
+      label: "Sports Competition participation certificate", 
+      doc_type: "participationProof", 
+      doc_subtype: "participationCertificate" 
+    },
+    { 
+      value: "Birth Certificate", 
+      label: "Birth Certificate", 
+      doc_type: "birthProof", 
+      doc_subtype: "birthCertificate" 
+    },
+  ];
+  
 export const languageOptions = [
     { value: 'English', label: 'English' },
     // { value: 'Hindi', label: 'Hindi' },
