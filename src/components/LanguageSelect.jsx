@@ -21,6 +21,7 @@ const LanguageSelect = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [language, setLanguage] = useState("English");
+  const token=localStorage.getItem('authToken');
   if(localStorage.getItem('logout')) {
     localStorage.clear();
   }
@@ -32,7 +33,9 @@ const LanguageSelect = () => {
       const decoded = jwtDecode(keycloak.token);
 
       // Save authentication info in localStorage
-      localStorage.setItem("authToken", keycloak.token);
+      if(!token){
+        localStorage.setItem("authToken", keycloak.token);
+      }
       localStorage.setItem("ssoid", decoded.sub);
 
 
