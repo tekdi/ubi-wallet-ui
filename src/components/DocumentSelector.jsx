@@ -32,12 +32,12 @@ const DocumentSelector = () => {
     } else {
       newChecked.splice(currentIndex, 1);
     }
-    setSelectedDocs(newSelectedDocs);
+
+    setSelectedDocs(newChecked);
   };
 
-  // Handle the import button click
   const handleImportClick = () => {
-    const selectedDocuments = documents.filter(doc => selectedDocs.has(doc.doc_id));
+    const selectedDocuments = documents.filter(doc => selectedDocs.includes(doc.doc_id));
     const parentAppOrigin = import.meta.env.VITE_PARENT_APP_ORIGIN;
 
     console.log('Selected Documents:', selectedDocuments);
@@ -47,7 +47,6 @@ const DocumentSelector = () => {
     );
   };
 
-  // Fetch documents from API
   useEffect(() => {
     const fetchDocuments = async () => {
       const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch`;
@@ -74,7 +73,6 @@ const DocumentSelector = () => {
         setDocuments(data);
       } catch (err) {
         console.error("Error fetching documents:", err.message);
-        setError('Error fetching documents. Please try again later.');
       }
     };
 
@@ -112,16 +110,6 @@ const DocumentSelector = () => {
     }
   }, [authToken, isTokenReceived, isEmbedded, navigate]);
 
-  // Handle search input change
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  // Filter documents based on search query
-  const filteredDocuments = documents.filter(doc =>
-    doc.doc_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
     <Box
       sx={{
@@ -139,8 +127,6 @@ const DocumentSelector = () => {
             fullWidth
             placeholder="Search By Document Name"
             variant="standard"
-            value={searchQuery}
-            onChange={handleSearchChange}  // Attach search change handler
             InputProps={{
               disableUnderline: true,
               endAdornment: (
@@ -151,20 +137,13 @@ const DocumentSelector = () => {
           />
         </StyledSearchBox>
 
-        {/* Error Handling */}
-        {error && (
-          <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-            {error}
-          </Typography>
-        )}
-
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Please choose your required document.
         </Typography>
 
         {/* Document List */}
         <List>
-          {filteredDocuments.map((doc) => (
+          {documents.map((doc) => (
             <ListItem key={doc.doc_id} disablePadding sx={{ mb: 1 }}>
               <Box
                 sx={{
@@ -182,7 +161,7 @@ const DocumentSelector = () => {
                 />
                 <Checkbox
                   edge="end"
-                  checked={selectedDocs.has(doc.doc_id)}  // Use Set for checking selection
+                  checked={selectedDocs.indexOf(doc.doc_id) !== -1}
                   onChange={() => handleToggle(doc.doc_id)}
                 />
               </Box>
@@ -200,10 +179,10 @@ const DocumentSelector = () => {
             textTransform: "none",
             borderRadius: 2,
           }}
-          disabled={selectedDocs.size === 0}  // Disable button if no documents are selected
+          disabled={selectedDocs.length === 0}
           onClick={handleImportClick}
         >
-          + Import Documents ({selectedDocs.size})
+          + Import Documents ({selectedDocs.length})
         </Button>
       </Container>
       <BottomNavigationBar/>
