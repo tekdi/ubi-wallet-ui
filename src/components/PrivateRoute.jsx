@@ -8,7 +8,7 @@ const PrivateRoute = ({ children }) => {
   const location = useLocation();
   const isLoggedIn = keycloak.authenticated;
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn || localStorage.getItem('authToken') == undefined ) {
     localStorage.setItem("login-redirect", location.pathname);
     navigate("/"); 
   }
