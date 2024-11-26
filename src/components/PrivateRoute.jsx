@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
+import { useEffect } from "react";
 
 const PrivateRoute = ({ children }) => {
-  // const isLoggedIn = localStorage.getItem("authToken");
   const navigate = useNavigate();
   const { keycloak } = useKeycloak();
   const location = useLocation();

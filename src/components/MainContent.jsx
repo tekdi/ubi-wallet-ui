@@ -82,7 +82,7 @@ const MainContent = () => {
                   </ListItemIcon>
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
                     <ListItemText
-                      primary={doc.doc_type}
+                      primary={doc.doc_name}
                       primaryTypographyProps={{
                         sx: {
                           fontSize: "1rem",

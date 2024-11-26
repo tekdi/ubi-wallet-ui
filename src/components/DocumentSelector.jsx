@@ -155,7 +155,7 @@ const DocumentSelector = () => {
                 }}
               >
                 <ListItemText
-                  primary={doc.doc_type}
+                  primary={doc.doc_name}
                   secondary={doc.doc_id}
                   sx={{ flexGrow: 1 }}
                 />
