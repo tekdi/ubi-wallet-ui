@@ -153,9 +153,18 @@ const LanguageSelect = () => {
           fullWidth
           size="large"
           onClick={handleLogin}
-          sx={{ borderRadius: 7 }}
+          sx={{ borderRadius: 7,fontFamily: "Poppins, sans-serif",bgcolor: "#121943" }}
         >
           Log In to E-Wallet
+        </Button>
+        <Button
+          variant="outlined"
+          fullWidth
+          size="large"
+          onClick={()=> navigate("/signup")}
+          sx={{ borderRadius: 7,bgcolor:'white',fontFamily: "Poppins, sans-serif",color:"#121943",mt:2,mb:5 }}
+        >
+          Register
         </Button>
       </Paper>
     </Box>
