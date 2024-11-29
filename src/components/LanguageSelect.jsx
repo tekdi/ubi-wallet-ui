@@ -9,6 +9,7 @@ import {
   Button,
   FormControl,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import icon from "../assets/icon.svg";
@@ -52,7 +53,21 @@ const LanguageSelect = () => {
       console.error("Login failed:", error instanceof Error ? error.message : "Unknown error");
     }
   };
-
+  // Show loader if Keycloak is not initialized
+  if (!initialized) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <CircularProgress size={50}/>
+      </Box>
+    );
+  }
   return (
     <Box
       sx={{
