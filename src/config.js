@@ -6,10 +6,10 @@ export const documentTypes = [
       doc_subtype: "aadhaar" 
     },
     { 
-      value: "Jan Aadhaar for (Domicile information)", 
-      label: "Jan Aadhaar for (Domicile information)", 
-      doc_type: "domicileProof", 
-      doc_subtype: "domicileCertificate" 
+      value: "Jan Aadhar", 
+      label: "Jan Aadhar", 
+      doc_type: "janAadhar", 
+      doc_subtype: "janAadharCertificate" 
     },
     { 
       value: "Caste Certificate", 
