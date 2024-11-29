@@ -6,10 +6,10 @@ export const documentTypes = [
       doc_subtype: "aadhaar" 
     },
     { 
-      value: "Jan Aadhaar for (Domicile information)", 
-      label: "Jan Aadhaar for (Domicile information)", 
-      doc_type: "domicileProof", 
-      doc_subtype: "domicileCertificate" 
+      value: "Jan Aadhar", 
+      label: "Jan Aadhar", 
+      doc_type: "janAadhar", 
+      doc_subtype: "janAadharCertificate" 
     },
     { 
       value: "Caste Certificate", 
@@ -24,10 +24,10 @@ export const documentTypes = [
       doc_subtype: "incomeCertificate" 
     },
     { 
-      value: "Enrolment Certificate (with hosteller/day scholar information)", 
-      label: "Enrolment Certificate (with hosteller/day scholar information)", 
+      value: "Enrollment Certificate (with hosteller/day scholar information)", 
+      label: "Enrollment Certificate (with hosteller/day scholar information)", 
       doc_type: "associationProof", 
-      doc_subtype: "enrolmentCertificate" 
+      doc_subtype: "enrollmentCertificate" 
     },
     { 
       value: "Marksheet", 
