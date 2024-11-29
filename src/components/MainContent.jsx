@@ -64,7 +64,7 @@ const MainContent = () => {
           <List sx={{ width: "100%" }}>
             {documents.map((doc, index) => {
               // Parse the doc_data string to get the id
-              const docData = JSON.parse(doc.doc_data);
+              // const docData = JSON.parse(doc.doc_data);
               return (
                 <ListItem
                   key={doc.doc_id}
@@ -93,7 +93,7 @@ const MainContent = () => {
                       }}
                     />
                     <FormHelperText sx={{ ml: 0.4, fontFamily: "Poppins, sans-serif" }}>
-                      ID: {docData.id}
+                      ID: {doc.doc_id}
                     </FormHelperText>
                   </Box>
                 </ListItem>
