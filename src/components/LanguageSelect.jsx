@@ -53,7 +53,7 @@ const LanguageSelect = () => {
       console.error("Login failed:", error instanceof Error ? error.message : "Unknown error");
     }
   };
-``// Show loader if Keycloak is not initialized
+  // Show loader if Keycloak is not initialized
   if (!initialized) {
     return (
       <Box
