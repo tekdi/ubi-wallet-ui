@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate', // Automatically updates service workers
       includeAssets: ['favicon.ico'], //, 'robots.txt', 'apple-touch-icon.png'
       manifest: {
-        name: 'E-Wallet',
-        short_name: 'Wallet',
-        description: 'E Wallet for Piramal',
+        name: 'DigiPramaan',
+        short_name: 'DigiPramaan',
+        description: 'DigiPramaan for Piramal',
         theme_color: '#ffffff',
         icons: [
           {

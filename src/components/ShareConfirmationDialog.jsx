@@ -102,7 +102,7 @@ const ShareConfirmationDialog = ({ open, onClose, documentType,documentSubType,d
 
       <DialogContent sx={{ pt: 2 }}>
         <Typography variant="h6" sx={{ mb: 3, fontFamily: 'Poppins, sans-serif' }}>
-          Please provide your consent to share the selected document with your E-Wallet
+          Please provide your consent to share the selected document with your DigiPramaan
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -148,7 +148,7 @@ const ShareConfirmationDialog = ({ open, onClose, documentType,documentSubType,d
         <Typography variant="h6" sx={{ mb: 3, fontFamily: 'Poppins, sans-serif' }}>
           Your <Typography component="span" color="primary" variant="h6" sx={{ fontFamily: 'Poppins, sans-serif' }}>
             {documentName}
-          </Typography> has been added to your documents set in the E-Wallet!
+          </Typography> has been added to your documents set in the DigiPramaan!
         </Typography>
 
         <Box sx={{
