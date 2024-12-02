@@ -40,7 +40,7 @@ const Header = () => {
             fontStyle: "italic",
           }}
         >
-          E-Wallet
+          DigiPramaan
         </Typography>
 
         {/* Language Selector */}
