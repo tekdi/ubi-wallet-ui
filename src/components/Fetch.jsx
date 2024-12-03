@@ -143,7 +143,7 @@ const Fetch = () => {
           fullWidth
           startIcon={<DownloadIcon />}
           onClick={handleFetch} // Trigger fetch only if valid
-          sx={{ borderRadius: 7 }}
+          sx={{ borderRadius: 7,fontFamily: "Poppins, sans-serif",textTransform: "none"  }}
         >
           Fetch
         </Button>

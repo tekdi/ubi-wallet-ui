@@ -9,9 +9,11 @@ import {
   Button,
   FormControl,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import icon from "../assets/icon.svg";
+import logo from "../assets/logo.svg";
 import { languageOptions } from "../config";
 import { useKeycloak } from "@react-keycloak/web";
 import {jwtDecode} from 'jwt-decode'; // Fixed import
@@ -52,7 +54,21 @@ const LanguageSelect = () => {
       console.error("Login failed:", error instanceof Error ? error.message : "Unknown error");
     }
   };
-
+  // Show loader if Keycloak is not initialized
+  if (!initialized) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <CircularProgress size={50}/>
+      </Box>
+    );
+  }
   return (
     <Box
       sx={{
@@ -77,39 +93,45 @@ const LanguageSelect = () => {
       >
         <Box
           sx={{
+            flex: 1,
             display: "flex",
-            alignItems: "center",
+            flexDirection: "column",
             justifyContent: "center",
-            gap: 2,
+            alignItems: "center",
+            color: "white",
+            p: 3,
+            gap: 1,
           }}
         >
+          <Box
+            component="img"
+            src={logo}
+            alt="Logo"
+            sx={{
+              width: 100,
+              height: 38,
+            }}
+          />
           <Box
             component="img"
             src={icon}
             alt="Icon"
             sx={{
-              width: 60, // Adjust width
-              height: 60, // Adjust height
-              display: "block", // Ensure image behaves like a block element
+              width: 269,
+              height: 51,
             }}
           />
           <Typography
-            variant="h4"
-            component="h1"
+            variant="subtitle1"
             sx={{
+              textAlign: "center",
               fontFamily: "Poppins, sans-serif",
-              fontStyle: "italic",
-              textAlign: "center", // Align text center
-              lineHeight: "60px", // Match the image height for vertical centering
+              mt: 1,
             }}
-            gutterBottom
           >
-            E-Wallet
+            Your Digital Identity
           </Typography>
         </Box>
-        <Typography variant="subtitle1">
-          Unlock Opportunities, Seamlessly
-        </Typography>
       </Box>
 
       {/* Language Selection Section */}
@@ -117,7 +139,7 @@ const LanguageSelect = () => {
         sx={{
           p: 3,
           borderRadius: "24px 24px 0 0",
-          mt: "auto", // Push this section to the bottom of the screen
+          mt: "auto",
         }}
       >
         <Typography variant="h6" gutterBottom>
@@ -153,16 +175,29 @@ const LanguageSelect = () => {
           fullWidth
           size="large"
           onClick={handleLogin}
-          sx={{ borderRadius: 7,fontFamily: "Poppins, sans-serif",bgcolor: "#121943" }}
+          sx={{
+            borderRadius: 7,
+            fontFamily: "Poppins, sans-serif",
+            textTransform: "none",
+            bgcolor: "#121943",
+          }}
         >
-          Log In to E-Wallet
+          Log In to DigiPramaan
         </Button>
         <Button
           variant="outlined"
           fullWidth
           size="large"
-          onClick={()=> navigate("/signup")}
-          sx={{ borderRadius: 7,bgcolor:'white',fontFamily: "Poppins, sans-serif",color:"#121943",mt:2,mb:5 }}
+          onClick={() => navigate("/signup")}
+          sx={{
+            borderRadius: 7,
+            bgcolor: "white",
+            fontFamily: "Poppins, sans-serif",
+            textTransform: "none",
+            color: "#121943",
+            mt: 2,
+            mb: 5,
+          }}
         >
           Register
         </Button>

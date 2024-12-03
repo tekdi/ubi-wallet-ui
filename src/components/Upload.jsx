@@ -152,7 +152,7 @@ const Upload = () => {
         <Button
           variant="contained"
           fullWidth
-          sx={{ mt: 4, borderRadius: 7 }}
+          sx={{ mt: 4, borderRadius: 7,fontFamily: "Poppins, sans-serif",textTransform: "none" }}
           startIcon={<UploadFileIcon />}
           onClick={handleUpload}
         >
