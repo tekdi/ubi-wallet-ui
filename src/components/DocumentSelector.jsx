@@ -106,7 +106,7 @@ const DocumentSelector = () => {
     if (isEmbedded) return;
     if (!authToken && !isTokenReceived) {
       localStorage.setItem("login-redirect", window.location.pathname);
-      navigate('/');
+      navigate('/login');
     }
   }, [authToken, isTokenReceived, isEmbedded, navigate]);
 

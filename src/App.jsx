@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import LanguageSelect from './components/LanguageSelect';
 import Signup from './components/Signup';
+import SignUp from './components/Signupnew';
 import Login from './components/Login';
 import Home from './components/Home';
 import Upload from './components/Upload';
@@ -49,8 +50,9 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LanguageSelect />} />
-          <Route path="/signup" element={<Signup />} />
-          {/* <Route path="/login" element={<Login />} /> */}
+          {/* <Route path="/signup" element={<Signup />} /> */} {/* Signup with keycloak */}
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/upload" element={<PrivateRoute><Upload /></PrivateRoute>} />
           <Route path="/fetch" element={<PrivateRoute><Fetch /></PrivateRoute>} />

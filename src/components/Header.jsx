@@ -13,7 +13,7 @@ import SlideMenu from "./SlideMenu";
 const Header = () => {
   // Define the state to store selected language
   const [language, setLanguage] = useState("EN");
-  const shouldShowSlideMenu = location.pathname !== "/signup";
+  const shouldShowSlideMenu = !['/signup', '/login'].includes(location.pathname);
 
   const handleLanguageChange = (event) => {
     setLanguage(event.target.value);
