@@ -15,11 +15,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import icon from "../assets/icon.svg";
 import logo from "../assets/logo.svg";
 import { languageOptions } from "../config";
-import { useKeycloak } from "@react-keycloak/web";
+// import { useKeycloak } from "@react-keycloak/web";
 import {jwtDecode} from 'jwt-decode'; // Fixed import
 
 const LanguageSelect = () => {
-  const { keycloak, initialized } = useKeycloak();
+  // const { keycloak, initialized } = useKeycloak();
   const location = useLocation();
   const navigate = useNavigate();
   const [language, setLanguage] = useState("English");
@@ -29,46 +29,47 @@ const LanguageSelect = () => {
   }
 
   // Handle redirect after successful login
-  useEffect(() => {
+  // useEffect(() => {
     
-    if (initialized && keycloak.authenticated) {
-      const decoded = jwtDecode(keycloak.token);
+  //   if (initialized && keycloak.authenticated) {
+  //     const decoded = jwtDecode(keycloak.token);
 
-      // Save authentication info in localStorage
-      if(!token){
-        localStorage.setItem("authToken", keycloak.token);
-      }
-      localStorage.setItem("ssoid", decoded.sub);
+  //     // Save authentication info in localStorage
+  //     if(!token){
+  //       localStorage.setItem("authToken", keycloak.token);
+  //     }
+  //     localStorage.setItem("ssoid", decoded.sub);
 
 
-      const redirectUrl = localStorage.getItem('login-redirect') || '/home';
-      navigate(redirectUrl);
-    }
-  }, [ keycloak?.authenticated, navigate, location.state]);
+  //     const redirectUrl = localStorage.getItem('login-redirect') || '/home';
+  //     navigate(redirectUrl);
+  //   }
+  // }, [ keycloak?.authenticated, navigate, location.state]);
 
   // Handle the login process
   const handleLogin = async () => {
-    try {
-      await keycloak.login();
-    } catch (error) {
-      console.error("Login failed:", error instanceof Error ? error.message : "Unknown error");
-    }
+    navigate('/login');
+    // try {
+    //   await keycloak.login();
+    // } catch (error) {
+    //   console.error("Login failed:", error instanceof Error ? error.message : "Unknown error");
+    // }
   };
   // Show loader if Keycloak is not initialized
-  if (!initialized) {
-    return (
-      <Box
-        sx={{
-          minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center"
-        }}
-      >
-        <CircularProgress size={50}/>
-      </Box>
-    );
-  }
+  // if (!initialized) {
+  //   return (
+  //     <Box
+  //       sx={{
+  //         minHeight: "100vh",
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         alignItems: "center"
+  //       }}
+  //     >
+  //       <CircularProgress size={50}/>
+  //     </Box>
+  //   );
+  // }
   return (
     <Box
       sx={{
