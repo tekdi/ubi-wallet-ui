@@ -5,24 +5,45 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import { Box } from '@mui/system';
 import { useKeycloak } from "@react-keycloak/web";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const SlideMenu = () => {
-    const {keycloak} = useKeycloak();
+    // const {keycloak} = useKeycloak();
   const [open, setOpen] = useState(false); // State to control drawer open/close
 
   // Handle the toggle of the drawer
   const toggleDrawer = () => {
     setOpen(!open);
   };
+const navigate = useNavigate();
+const apiURL = import.meta.env.VITE_APP_API_URL;
+const token=localStorage.getItem('authToken');
+const refreshtoken = localStorage.getItem('refreshToken');
+  const handleLogout = async () => {
+    try {
 
+      const response = await axios.post(`${apiURL}/auth/logout`, {access_token : token,refresh_token:refreshtoken}, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if (response.status === 200) {
 
-  const handleLogout = () => {
-    keycloak.logout({redirectUri:window.location.origin,});  // Redirects to home after logout
-    localStorage.clear();
-    localStorage.setItem('logout',true);
-     // Logout from Keycloak
-    console.log('Logging out...',window.location.origin);
+        localStorage.clear();
+        localStorage.setItem('logout', true);
+        
+        console.log('Logging out...', window.location.origin);
+        navigate('/')
+      } else {
+        console.error('Failed to log out. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error.response?.data?.message || error.message);
+    }
   };
+  
 
   return (
     <Box>

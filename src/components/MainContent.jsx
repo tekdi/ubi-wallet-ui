@@ -59,7 +59,7 @@ const MainContent = () => {
 
   if (documents.length>0) {
     return (
-      <Box sx={{ maxWidth: 600, mx: "auto", p: 0.5 }}>
+      <Box sx={{ maxWidth: 600, mx: "auto", p:0.5 }}>
         <Paper elevation={1} sx={{ bgcolor: "background.paper" }}>
           <List sx={{ width: "100%" }}>
             {documents.map((doc, index) => {
