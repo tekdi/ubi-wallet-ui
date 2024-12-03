@@ -1,6 +1,6 @@
-name: UAT S3 Deployment on the Piramal-OU Tekdi
-
-on: [push]
+name: Deploy to UAT
+on:
+  workflow_dispatch:
 jobs:
   deploy_UAT_wallet:
     runs-on: ubuntu-latest

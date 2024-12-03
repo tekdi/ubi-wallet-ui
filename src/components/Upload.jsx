@@ -11,6 +11,10 @@ import {
   FormHelperText,
   FormControl,
   InputLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -23,6 +27,8 @@ import { useNavigate } from "react-router-dom";
 const Upload = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [file, setFile] = useState(null); // Store the selected file
+  const [fileContent, setFileContent] = useState(null); // Store the content of the file
+  const [openPreview, setOpenPreview] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null); // Store the selected document type
   const [errors, setErrors] = useState({ file: "", documentType: "" }); // For error handling
   const navigate = useNavigate();
@@ -31,10 +37,26 @@ const Upload = () => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       if (selectedFile.type === "application/json") {
-        setFile(selectedFile); // Store the file if it's valid JSON
-        setErrors((prevErrors) => ({ ...prevErrors, file: "" }));
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const parsedContent = JSON.parse(event.target.result);
+            setFile(selectedFile);
+            setFileContent(parsedContent);
+            setErrors((prevErrors) => ({ ...prevErrors, file: "" }));
+          } catch (err) {
+            setFile(null);
+            setFileContent(null);
+            setErrors((prevErrors) => ({
+              ...prevErrors,
+              file: "Invalid JSON file. Please upload a valid JSON.",
+            }));
+          }
+        };
+        reader.readAsText(selectedFile);
       } else {
         setFile(null);
+        setFileContent(null);
         setErrors((prevErrors) => ({
           ...prevErrors,
           file: "Please upload a valid JSON file.",
@@ -145,6 +167,23 @@ const Upload = () => {
           )}
         </Box>
 
+        {/* Preview Button */}
+        {file && (
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{
+              mb: 2,
+              borderRadius: 7,
+              fontFamily: "Poppins, sans-serif",
+              textTransform: "none",
+            }}
+            onClick={() => setOpenPreview(true)}
+          >
+            Preview File
+          </Button>
+        )}
+
         <Typography variant="caption" color="text.secondary">
           Ensure that the file is in JSON format.
         </Typography>
@@ -152,7 +191,7 @@ const Upload = () => {
         <Button
           variant="contained"
           fullWidth
-          sx={{ mt: 4, borderRadius: 7,fontFamily: "Poppins, sans-serif",textTransform: "none" }}
+          sx={{ mt: 4, borderRadius: 7, fontFamily: "Poppins, sans-serif", textTransform: "none" }}
           startIcon={<UploadFileIcon />}
           onClick={handleUpload}
         >
@@ -169,6 +208,27 @@ const Upload = () => {
           file={file}
         />
       </Container>
+
+      {/* JSON Preview Dialog */}
+      <Dialog open={openPreview} onClose={() => setOpenPreview(false)} maxWidth="md" fullWidth>
+        <DialogTitle>JSON Preview</DialogTitle>
+        <DialogContent>
+          <pre
+            style={{
+              background: "#f4f4f4",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              overflowX: "auto",
+            }}
+          >
+            {fileContent ? JSON.stringify(fileContent, null, 2) : "No content to display."}
+          </pre>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenPreview(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
       <BottomNavigationBar />
     </Box>
