@@ -1,6 +1,8 @@
-name: DEV S3 Deployment on the Piramal-OU Tekdi
-
-on: [push]
+name: Deploy to DEV
+on:
+  push:
+    branches:
+      - main
 jobs:
   deploy_Dev_wallet:
     runs-on: ubuntu-latest
