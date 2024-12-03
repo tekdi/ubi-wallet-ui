@@ -1,5 +1,4 @@
-name: DEV S3 Deployment on the Piramal-OU Tekdi
-
+name: Deploy to DEV
 on: [push]
 jobs:
   deploy_Dev_wallet:
