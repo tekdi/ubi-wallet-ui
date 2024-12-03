@@ -44,14 +44,11 @@ const SignUp = () => {
     }
 
     // Password validation with regex: at least one uppercase letter, one lowercase letter, one number, and one special character
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).*$/;
     if (!password) errors.password = "Password is required.";
-    else if (password.length < 6) {
-      errors.password = "Password must be at least 6 characters long.";
-    } else if (!passwordRegex.test(password)) {
-      errors.password = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+    else if (password.length < 4) {
+      errors.password = "Password must be at least 4 characters long.";
     }
-
+  
     if (password !== confirmPassword) {
       errors.confirmPassword = "Passwords do not match.";
     }
