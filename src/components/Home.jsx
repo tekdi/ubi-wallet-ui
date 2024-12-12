@@ -1,26 +1,26 @@
 // Home.jsx
-import React from 'react';
-import { Box } from '@mui/material';
-import Header from './Header';
-import MainContent from './MainContent';
-import FloatingActionButton from './FloatingActionButton';
-import BottomNavigationBar from './BottomNavigationBar';
+import { Box } from "@mui/material";
+import Header from "./Header";
+import MainContent from "./MainContent";
+import BottomNavigationBar from "./BottomNavigationBar";
 
 const Home = () => {
   return (
-    <Box sx={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between'
-    }}>
+    <>
       <Header />
-      <Box sx={{ flexGrow: 1 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto", // Enables vertical scrolling
+          height: "calc(100vh - 160px)", // Adjust height dynamically based on fixed header/footer
+          mt: "80PX",
+        }}
+      >
         <MainContent />
       </Box>
-      <FloatingActionButton />
+
       <BottomNavigationBar />
-    </Box>
+    </>
   );
 };
 
