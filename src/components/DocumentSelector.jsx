@@ -1,16 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import Header from './Header';
-import BottomNavigationBar from './BottomNavigationBar';
-import { useNavigate } from 'react-router-dom';
-import { Box, Container, Typography, TextField, List, ListItem, ListItemText, Checkbox, Button, Paper } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+import { useState, useEffect } from "react";
+import Header from "./Header";
+import BottomNavigationBar from "./BottomNavigationBar";
+import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  Checkbox,
+  Button,
+  Paper,
+} from "@mui/material";
+import { Search as SearchIcon } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
 
 const StyledSearchBox = styled(Paper)(({ theme }) => ({
-  padding: '2px 4px',
-  display: 'flex',
-  alignItems: 'center',
-  width: '100%',
+  padding: "2px 4px",
+  display: "flex",
+  alignItems: "center",
+  width: "100%",
   backgroundColor: "#E9E7EF",
   marginBottom: theme.spacing(2),
   borderRadius: 9,
@@ -20,7 +31,7 @@ const DocumentSelector = () => {
   const navigate = useNavigate();
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [documents, setDocuments] = useState([]);
-  const [authToken, setAuthToken] = useState(localStorage.getItem('authToken'));
+  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken"));
   const [isTokenReceived, setIsTokenReceived] = useState(false);
   const isEmbedded = window.self !== window.top;
   const handleToggle = (id) => {
@@ -37,12 +48,14 @@ const DocumentSelector = () => {
   };
 
   const handleImportClick = () => {
-    const selectedDocuments = documents.filter(doc => selectedDocs.includes(doc.doc_id));
+    const selectedDocuments = documents.filter((doc) =>
+      selectedDocs.includes(doc.doc_id)
+    );
     const parentAppOrigin = import.meta.env.VITE_PARENT_APP_ORIGIN;
 
-    console.log('Selected Documents:', selectedDocuments);
+    console.log("Selected Documents:", selectedDocuments);
     window.parent.postMessage(
-      { type: 'selected-docs', data: selectedDocuments },
+      { type: "selected-docs", data: selectedDocuments },
       parentAppOrigin
     );
   };
@@ -52,7 +65,9 @@ const DocumentSelector = () => {
       const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch`;
 
       if (!authToken) {
-        console.warn("Auth token not found, waiting for parent app to provide token...");
+        console.warn(
+          "Auth token not found, waiting for parent app to provide token..."
+        );
         return;
       }
 
@@ -61,7 +76,7 @@ const DocumentSelector = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${authToken}`,
+            Authorization: `Bearer ${authToken}`,
           },
         });
 
@@ -86,19 +101,19 @@ const DocumentSelector = () => {
 
     const messageListener = (event) => {
       const data = event.data;
-      if (data.type === 'JWT_TOKEN' && data.payload) {
+      if (data.type === "JWT_TOKEN" && data.payload) {
         const jwtToken = data.payload;
         console.log("Received JWT Token from parent:", jwtToken);
-        localStorage.setItem('authToken', jwtToken);
+        localStorage.setItem("authToken", jwtToken);
         setAuthToken(jwtToken);
         setIsTokenReceived(true);
       }
     };
 
-    window.addEventListener('message', messageListener);
+    window.addEventListener("message", messageListener);
 
     return () => {
-      window.removeEventListener('message', messageListener);
+      window.removeEventListener("message", messageListener);
     };
   }, [isEmbedded]);
 
@@ -106,21 +121,20 @@ const DocumentSelector = () => {
     if (isEmbedded) return;
     if (!authToken && !isTokenReceived) {
       localStorage.setItem("login-redirect", window.location.pathname);
-      navigate('/login');
+      navigate("/login");
     }
   }, [authToken, isTokenReceived, isEmbedded, navigate]);
 
   return (
     <Box
       sx={{
-        pb: 7,
-        bgcolor: "#F8F9FA",
-        minHeight: "100vh",
-        fontFamily: "Poppins, sans-serif",
+        overflowY: "auto", // Enables vertical scrolling
+        height: "calc(100vh - 160px)", // Adjust height dynamically based on fixed header/footer
+        mt: "80PX",
       }}
     >
       <Header />
-      <Container maxWidth="sm" sx={{ mt: 2 }}>
+      <Container maxWidth="sm">
         {/* Search Box */}
         <StyledSearchBox>
           <TextField
@@ -136,12 +150,16 @@ const DocumentSelector = () => {
             sx={{ ml: 1 }}
           />
         </StyledSearchBox>
-
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ mb: 2, mt: 1 }}
+        >
           Please choose your required document.
         </Typography>
 
         {/* Document List */}
+
         <List>
           {documents.map((doc) => (
             <ListItem key={doc.doc_id} disablePadding sx={{ mb: 1 }}>
@@ -168,7 +186,6 @@ const DocumentSelector = () => {
             </ListItem>
           ))}
         </List>
-
         {/* Import Button */}
         <Button
           variant="contained"
@@ -185,7 +202,7 @@ const DocumentSelector = () => {
           + Import Documents ({selectedDocs.length})
         </Button>
       </Container>
-      <BottomNavigationBar/>
+      <BottomNavigationBar />
     </Box>
   );
 };
