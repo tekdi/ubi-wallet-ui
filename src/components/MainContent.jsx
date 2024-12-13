@@ -21,6 +21,8 @@ import NoDocuments from "../assets/NoDocuments.png";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
 import FloatingActionButton from "./FloatingActionButton";
 import axios from "axios";
 
@@ -32,6 +34,7 @@ const MainContent = () => {
   const [success, setSuccess] = useState(null);
   const [open, setOpen] = useState(false);
   const [documentName, setDocumentName] = useState();
+  const [openPreview, setOpenPreview] = useState(false);
   const fetchDocuments = async () => {
     // Retrieve the auth token from localStorage
     const authToken = localStorage.getItem("authToken");
@@ -76,6 +79,9 @@ const MainContent = () => {
   const handleOpen = (doc) => {
     setDocumentName(doc);
     setOpen(true);
+  };
+  const handlePreviewClick = (doc) => {
+    setOpenPreview(JSON.parse(doc?.doc_data));
   };
   const handleDelete = async () => {
     const authToken = localStorage.getItem("authToken");
@@ -157,16 +163,28 @@ const MainContent = () => {
                       </Typography>
 
                       {/* Tooltip with Delete Icon */}
-                      <Tooltip title="Delete">
-                        <IconButton
-                          color="grey"
-                          aria-label="delete"
-                          size="medium"
-                          onClick={() => handleOpen(doc)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
+                      <Box>
+                        <Tooltip title="Preview Document">
+                          <IconButton
+                            color="grey"
+                            aria-label="delete"
+                            size="medium"
+                            onClick={() => handlePreviewClick(doc)}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton
+                            color="grey"
+                            aria-label="delete"
+                            size="medium"
+                            onClick={() => handleOpen(doc)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
                     </Box>
                     <FormHelperText
                       sx={{ ml: 0.4, fontFamily: "Poppins, sans-serif" }}
@@ -201,6 +219,33 @@ const MainContent = () => {
             <Button onClick={handleDelete} autoFocus>
               Delete
             </Button>
+          </DialogActions>
+        </Dialog>
+        {/* Preview Dialog */}
+        <Dialog
+          open={openPreview}
+          onClose={() => setOpenPreview(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>JSON Preview</DialogTitle>
+          <DialogContent>
+            <pre
+              style={{
+                background: "#f4f4f4",
+                padding: "10px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                overflowX: "auto",
+              }}
+            >
+              {openPreview
+                ? JSON.stringify(openPreview, null, 2)
+                : "No content to display."}{" "}
+            </pre>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenPreview(false)}>Close</Button>
           </DialogActions>
         </Dialog>
         {error && (
