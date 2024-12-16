@@ -1,66 +1,121 @@
-import React,{useState,useEffect} from "react";
+import { useState, useEffect } from "react";
 import {
   List,
   ListItem,
-  ListItemIcon,
-  ListItemText,
   Box,
   Paper,
   FormHelperText,
   Container,
-  Typography
+  Typography,
+  Tooltip,
+  IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Alert,
 } from "@mui/material";
-import NoDocuments from '../assets/NoDocuments.png';
+import NoDocuments from "../assets/NoDocuments.png";
 
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+
+import FloatingActionButton from "./FloatingActionButton";
+import axios from "axios";
 
 const MainContent = () => {
   // Document list data
   const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [documentName, setDocumentName] = useState();
+  const [openPreview, setOpenPreview] = useState(false);
+  const fetchDocuments = async () => {
+    // Retrieve the auth token from localStorage
+    const authToken = localStorage.getItem("authToken");
+
+    if (!authToken) {
+      setError("No authorization token found.");
+      return;
+    }
+
+    const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch documents");
+      }
+
+      const data = await response.json();
+
+      setDocuments(data);
+    } catch (err) {
+      setError(err.message);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
+  };
+
   useEffect(() => {
-    const fetchDocuments = async () => {
-      // Retrieve the auth token from localStorage
-      const authToken = localStorage.getItem("authToken");
-
-      if (!authToken) {
-        setError("No authorization token found.");
-        setLoading(false);
-        return;
-      }
-
-      const apiUrl = `${import.meta.env.VITE_APP_API_URL}/user-docs/fetch`;
-
-      try {
-        const response = await fetch(apiUrl, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${authToken}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch documents");
-        }
-
-        const data = await response.json();
-        setDocuments(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
     fetchDocuments();
-  }, []); 
+  }, []);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleOpen = (doc) => {
+    setDocumentName(doc);
+    setOpen(true);
+  };
+  const handlePreviewClick = (doc) => {
+    setOpenPreview(JSON.parse(doc?.doc_data));
+  };
+  const handleDelete = async () => {
+    const authToken = localStorage.getItem("authToken");
+    console.log(" document?.doc_id", documentName?.doc_id);
 
-  if (documents.length>0) {
+    try {
+      const url = `${import.meta.env.VITE_APP_API_URL}/user-docs/delete/${
+        documentName?.doc_id
+      }`;
+      const headers = {
+        Authorization: `Bearer ${authToken}`,
+      };
+
+      const response = await axios.delete(url, { headers });
+      handleClose();
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(null);
+      }, 5000);
+      fetchDocuments();
+
+      return response.data;
+    } catch (error) {
+      handleClose();
+      setError(error.errorMessage);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
+  };
+  if (documents.length > 0) {
     return (
-      <Box sx={{ maxWidth: 600, mx: "auto", p:0.5 }}>
-        <Paper elevation={1} sx={{ bgcolor: "background.paper" }}>
+      <Box sx={{ maxWidth: 600, mx: "auto" }}>
+        <Paper elevation={1}>
           <List sx={{ width: "100%" }}>
             {documents.map((doc, index) => {
               // Parse the doc_data string to get the id
@@ -71,28 +126,69 @@ const MainContent = () => {
                   disablePadding
                   sx={{
                     py: 1.5,
-                    borderBottom: index !== documents.length - 1 ? "1px solid" : "none",
-                    borderColor: "divider",
+                    borderBottom:
+                      index !== documents.length - 1 ? "1px solid" : "none",
+                    borderColor: "#DDDDDD",
                     display: "flex",
                     alignItems: "flex-start",
+                    width: "100%",
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 40, p: 0.5 }}>
+                  <Box sx={{ minWidth: 40, mt: "5px", p: 0.5 }}>
                     <CheckCircleIcon sx={{ color: "#00AB55", fontSize: 24 }} />
-                  </ListItemIcon>
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <ListItemText
-                      primary={doc.doc_name}
-                      primaryTypographyProps={{
-                        sx: {
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                    }}
+                  >
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      width={"100%"}
+                    >
+                      {/* Document Text */}
+                      <Typography
+                        sx={{
                           fontSize: "1rem",
                           fontWeight: 500,
                           color: "text.primary",
                           fontFamily: "Poppins, sans-serif",
-                        },
-                      }}
-                    />
-                    <FormHelperText sx={{ ml: 0.4, fontFamily: "Poppins, sans-serif" }}>
+                        }}
+                      >
+                        {doc.doc_name}
+                      </Typography>
+
+                      {/* Tooltip with Delete Icon */}
+                      <Box>
+                        <Tooltip title="Preview Document">
+                          <IconButton
+                            color="grey"
+                            aria-label="delete"
+                            size="medium"
+                            onClick={() => handlePreviewClick(doc)}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton
+                            color="grey"
+                            aria-label="delete"
+                            size="medium"
+                            onClick={() => handleOpen(doc)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    </Box>
+                    <FormHelperText
+                      sx={{ ml: 0.4, fontFamily: "Poppins, sans-serif" }}
+                    >
                       ID: {doc.doc_id}
                     </FormHelperText>
                   </Box>
@@ -101,6 +197,63 @@ const MainContent = () => {
             })}
           </List>
         </Paper>
+        <FloatingActionButton />
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">Confirm Delete</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete the document{" "}
+              <strong>{documentName?.doc_name}</strong>? This action cannot be
+              undone.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} autoFocus>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* Preview Dialog */}
+        <Dialog
+          open={openPreview}
+          onClose={() => setOpenPreview(false)}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>JSON Preview</DialogTitle>
+          <DialogContent>
+            <pre
+              style={{
+                background: "#f4f4f4",
+                padding: "10px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                overflowX: "auto",
+              }}
+            >
+              {openPreview
+                ? JSON.stringify(openPreview, null, 2)
+                : "No content to display."}{" "}
+            </pre>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenPreview(false)}>Close</Button>
+          </DialogActions>
+        </Dialog>
+        {error && (
+          <Alert severity="error">This is an error Alert.{error}</Alert>
+        )}
+        {success && (
+          <Alert severity="success">Document deleted successfully</Alert>
+        )}
       </Box>
     );
   }
@@ -111,10 +264,10 @@ const MainContent = () => {
       sx={{
         pt: 8,
         pb: 10,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
         flexGrow: 1,
       }}
     >
@@ -123,10 +276,18 @@ const MainContent = () => {
         alt="No Documents"
         style={{ width: 260, height: 210 }}
       />
-      <Typography variant="h5" gutterBottom sx={{ fontFamily: "Poppins, sans-serif" }}>
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{ fontFamily: "Poppins, sans-serif" }}
+      >
         <b>Bring Your Digital Identity</b>
       </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ fontFamily: "Poppins, sans-serif" }}>
+      <Typography
+        variant="body1"
+        color="text.secondary"
+        sx={{ fontFamily: "Poppins, sans-serif" }}
+      >
         Tap on the "+" icon below to add your documents to this wallet
       </Typography>
     </Container>
