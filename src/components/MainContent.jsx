@@ -163,11 +163,11 @@ const MainContent = () => {
                       </Typography>
 
                       {/* Tooltip with Delete Icon */}
-                      <Box>
+                      <Box display="flex" alignItems="center" gap={1}>
                         <Tooltip title="Preview Document">
                           <IconButton
                             color="grey"
-                            aria-label="delete"
+                            aria-label="preview"
                             size="medium"
                             onClick={() => handlePreviewClick(doc)}
                           >
