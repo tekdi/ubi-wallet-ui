@@ -290,6 +290,7 @@ const MainContent = () => {
       >
         Tap on the "+" icon below to add your documents to this wallet
       </Typography>
+      <FloatingActionButton />
     </Container>
   );
 };
