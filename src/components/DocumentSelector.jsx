@@ -133,8 +133,7 @@ const DocumentSelector = () => {
         mt: "80PX",
       }}
     >
-      <Header />
-      <Container maxWidth="sm">
+       <Container maxWidth="sm">
         {/* Search Box */}
         <StyledSearchBox>
           <TextField

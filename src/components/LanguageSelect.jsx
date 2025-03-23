@@ -78,6 +78,7 @@ const LanguageSelect = () => {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        mt :7
       }}
     >
       {/* Header Section */}

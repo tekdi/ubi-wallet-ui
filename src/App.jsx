@@ -13,6 +13,7 @@ import {
   createTheme, 
 } from '@mui/material';
 import PrivateRoute from './components/PrivateRoute';
+import Header from './components/Header';
 // Create theme
 const theme = createTheme({
   palette: {
@@ -47,6 +48,7 @@ const App = () => {
     
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <Header />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LanguageSelect />} />

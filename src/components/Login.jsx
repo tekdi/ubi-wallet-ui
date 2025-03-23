@@ -66,13 +66,13 @@ const Login = () => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Header />
-      <AppBar position="static" color="transparent" elevation={0}>
+      
+      <AppBar position="static" color="transparent" elevation={0} sx={{ mt:8 }}>
         <Toolbar>
           <IconButton edge="start" onClick={() => navigate('/')}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ ml: 2, fontFamily: 'Poppins, sans-serif' }}>
+          <Typography variant="h6" sx={{ ml: 1, fontFamily: 'Poppins, sans-serif' }}>
             Log In
           </Typography>
         </Toolbar>
