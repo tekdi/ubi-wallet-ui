@@ -48,8 +48,8 @@ const App = () => {
     
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Header />
       <BrowserRouter>
+      <Header />
         <Routes>
           <Route path="/" element={<LanguageSelect />} />
           {/* <Route path="/signup" element={<Signup />} /> */} {/* Signup with keycloak */}
