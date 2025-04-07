@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { IconButton, Box } from "@mui/material";
 import {
   AppBar,
   Toolbar,
@@ -10,6 +13,7 @@ import {
 import { languages } from "../config";
 import SlideMenu from "./SlideMenu";
 const Header = () => {
+  const navigate = useNavigate();
   // Define the state to store selected language
   const [language, setLanguage] = useState("EN");
   const shouldShowSlideMenu = !["/signup", "/login"].includes(
@@ -28,33 +32,51 @@ const Header = () => {
       sx={{ height: "80px" }}
     >
       <Toolbar>
-        {/* Menu */}
-        {shouldShowSlideMenu && <SlideMenu />}
+        {/*Menu & Back Button*/}
+        {shouldShowSlideMenu ? (
+          <SlideMenu />
+        ) : (
+          <IconButton edge="start" onClick={() => navigate(-1)}>
+            <ArrowBackIcon />
+          </IconButton>
+        )}
 
-        {/* E-Wallet Title */}
-        <Typography
-          variant="h6"
-          sx={{
-            flexGrow: 1,
-            textAlign: "start",
-            fontFamily: "Poppins, sans-serif",
-            fontStyle: "italic",
-          }}
-        >
-          DigiPramaan
-        </Typography>
+        {/*Title & Language Selector Container*/}
+        <Box sx={{ 
+          display: 'flex',
+          flexGrow: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+          width: '100%'
+        }}>
+          {/*Title - Center*/}
+          <Typography
+            variant="h6"
+            sx={{
+              fontFamily: "Poppins, sans-serif",
+              fontStyle: "italic",
+              letterSpacing: "0.5px",
+              lineHeight: 1.2,
+              position: 'absolute',
+              left: '50%',
+              transform: 'translateX(-50%)'
+            }}
+          >
+            DigiPramaan
+          </Typography>
 
-        {/* Language Selector */}
-        <FormControl
-          sx={{
-            m: 1,
-            px: 2,
-            minWidth: 30,
-            border: "2px solid black",
-            borderRadius: "8px",
-          }}
-          variant="standard"
-        >
+          {/*Language Selector - Right Align*/}
+          <FormControl
+            sx={{
+              minWidth: 30,
+              border: "2px solid black",
+              borderRadius: "8px",
+              position: 'absolute',
+              right: 16
+            }}
+            variant="standard"
+          >
           <Select
             labelId="language-select-label"
             id="language-select"
@@ -69,6 +91,7 @@ const Header = () => {
             ))}
           </Select>
         </FormControl>
+      </Box>
       </Toolbar>
     </AppBar>
   );

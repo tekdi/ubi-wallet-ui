@@ -157,18 +157,12 @@ const Signup = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
-      <AppBar position="static" color="transparent" elevation={0}>
-        <Header/>
-        <Toolbar>
-          <IconButton edge="start" onClick={() => navigate(-1)}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h6" sx={{ ml: 2, fontFamily: "Poppins, sans-serif" }}>
-            Register
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <Box sx={{ 
+      minHeight: "100vh", 
+      bgcolor: "background.default",
+      pt: '80px' // Account for fixed header height
+    }}>
+      <Header/>
 
       <Container maxWidth="sm" sx={{ pt: 4 }}>
         <Paper sx={{ p: 3, borderRadius: 2 }}>
