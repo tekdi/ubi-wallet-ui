@@ -38,7 +38,7 @@ jobs:
       - name: List Contents
         run: |
            echo "Contents of the dist directory (in reverse order):"
-            cd 
+            cd dist
             ls -lr
             
 
