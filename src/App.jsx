@@ -13,6 +13,7 @@ import {
   createTheme, 
 } from '@mui/material';
 import PrivateRoute from './components/PrivateRoute';
+import Header from './components/Header';
 // Create theme
 const theme = createTheme({
   palette: {
@@ -48,6 +49,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
+      <Header />
         <Routes>
           <Route path="/" element={<LanguageSelect />} />
           {/* <Route path="/signup" element={<Signup />} /> */} {/* Signup with keycloak */}

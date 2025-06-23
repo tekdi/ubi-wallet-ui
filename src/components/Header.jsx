@@ -6,6 +6,7 @@ import {
   FormControl,
   Select,
   MenuItem,
+   
 } from "@mui/material";
 import { languages } from "../config";
 import SlideMenu from "./SlideMenu";
@@ -25,20 +26,22 @@ const Header = () => {
       position="fixed"
       color="transparent"
       elevation={0}
-      sx={{ height: "80px" }}
+      sx={{ height: "60px" , backgroundColor: "white", boxShadow : 2 }}
     >
       <Toolbar>
         {/* Menu */}
         {shouldShowSlideMenu && <SlideMenu />}
 
         {/* E-Wallet Title */}
-        <Typography
+         <Typography
           variant="h6"
           sx={{
             flexGrow: 1,
             textAlign: "start",
             fontFamily: "Poppins, sans-serif",
-            fontStyle: "italic",
+            fontWeight: 'bold',
+            alignItems: 'center' ,
+            cursor: "pointer",
           }}
         >
           DigiPramaan

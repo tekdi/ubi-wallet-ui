@@ -93,8 +93,7 @@ const Upload = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <Header />
-      <Container sx={{ flexGrow: 1 }}>
+       <Container sx={{ flexGrow: 1 }}>
         <Box sx={{ mt: 2, mb: 4 }}>
           <IconButton onClick={() => navigate("/home")}>
             <ArrowBackIcon />

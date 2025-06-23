@@ -12,6 +12,7 @@ import {
   IconButton,
   Container,
   InputAdornment,
+  
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Visibility from "@mui/icons-material/Visibility";
@@ -94,13 +95,12 @@ const SignUp = () => {
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
-      <AppBar position="static" color="transparent" elevation={0}>
-        <Header />
-        <Toolbar>
+      <AppBar position="static" color="transparent" elevation={0} sx={{ mt:8 }}>
+         <Toolbar>
           <IconButton edge="start" onClick={handleBack}>
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ ml: 2, fontFamily: "Poppins, sans-serif" }}>
+          <Typography variant="h6" sx={{ ml: 1, fontFamily: "Poppins, sans-serif" }}>
             Register
           </Typography>
         </Toolbar>

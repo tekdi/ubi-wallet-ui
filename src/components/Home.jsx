@@ -7,8 +7,7 @@ import BottomNavigationBar from "./BottomNavigationBar";
 const Home = () => {
   return (
     <>
-      <Header />
-      <Box
+       <Box
         sx={{
           flexGrow: 1,
           overflowY: "auto", // Enables vertical scrolling
