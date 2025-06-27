@@ -2,8 +2,6 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
-import Signup from './pages/Signup';
-import OtpVerification from './pages/OtpVerification';
 import Profile from './pages/Profile';
 import VcList from './pages/VcList';
 import VcDetails from './pages/VcDetails';
@@ -19,8 +17,6 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/otp-verification" element={<OtpVerification />} />
       <Route path="/" element={
         <PrivateRoute>
           <Layout />

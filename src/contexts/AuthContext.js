@@ -12,7 +12,10 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
@@ -24,78 +27,40 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, [token]);
 
-  const login = async (email, deviceInfo = 'Web Application') => {
+  const login = async (username, password) => {
     try {
       const response = await api.post('/api/wallet/login', {
-        email,
-        deviceInfo
+        username,
+        password
       });
-      return response.data;
-    } catch (error) {
-      throw error.response?.data?.message || 'Login failed';
-    }
-  };
 
-  const verifyOtp = async (sessionId, otp) => {
-    try {
-      const response = await api.post('/api/wallet/login/verify', {
-        sessionId,
-        otp
-      });
-      
-      const { token: userToken, accountId } = response.data;
-      
-      // Store token
+      if (response.data.statusCode !== 200) {
+        // Throw an error with the message from the response
+        throw new Error(response.data.message || 'Login failed');
+      }
+
+      const { token: userToken, accountId } = response.data.data;
+
+      // Store token and user info
       localStorage.setItem('token', userToken);
+      localStorage.setItem('user', JSON.stringify({ accountId }));
+      
       setToken(userToken);
-      
-      // Set user info
       setUser({ accountId });
-      
+
       // Set token in API headers
       api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
-      
-      return response.data;
-    } catch (error) {
-      throw error.response?.data?.message || 'OTP verification failed';
-    }
-  };
 
-  const resendOtp = async (sessionId) => {
-    try {
-      const response = await api.post('/api/wallet/login/resend-otp', {
-        sessionId
-      });
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || 'Failed to resend OTP';
-    }
-  };
-
-  const signup = async (userData) => {
-    try {
-      const response = await api.post('/api/wallet/onboard', userData);
-      
-      const { token: userToken, accountId } = response.data;
-      
-      // Store token
-      localStorage.setItem('token', userToken);
-      setToken(userToken);
-      
-      // Set user info
-      setUser({ accountId });
-      
-      // Set token in API headers
-      api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
-      
-      return response.data;
-    } catch (error) {
-      throw error.response?.data?.message || 'Signup failed';
+      // Return the error message from the response or from the thrown error
+      throw error.response?.data?.message || error.message || 'Login failed';
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setToken(null);
     setUser(null);
     delete api.defaults.headers.common['Authorization'];
@@ -109,9 +74,6 @@ export const AuthProvider = ({ children }) => {
     loading,
     isAuthenticated,
     login,
-    verifyOtp,
-    resendOtp,
-    signup,
     logout
   };
 
@@ -120,4 +82,4 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-}; 
+};

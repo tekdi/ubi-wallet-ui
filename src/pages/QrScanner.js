@@ -1,75 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import QrReader from 'react-qr-reader';
 import { QrCode, ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 
-const QrScanner = () => {
-  const [scanner, setScanner] = useState(null);
-  const [scanning, setScanning] = useState(false);
+const QrScannerPage = () => {
+  const [scanning, setScanning] = useState(true);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    startScanner();
-    return () => {
-      if (scanner) {
-        scanner.clear();
+  const handleScan = async (data) => {  
+    console.log('QR scan data:', data);
+    if (data && scanning) {
+      setScanning(false);
+      setResult(data);
+      
+      try {
+        setLoading(true);
+        setError('');
+        
+        await vcApi.uploadFromQr(user.accountId, data);
+        
+        // Success - navigate back to VC list
+        navigate('/vcs');
+      } catch (err) {
+        setError(err);
+        setLoading(false);
       }
-    };
-  }, []);
-
-  const startScanner = () => {
-    const html5QrcodeScanner = new Html5QrcodeScanner(
-      "qr-reader",
-      { 
-        fps: 10, 
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0
-      },
-      false
-    );
-
-    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-    setScanner(html5QrcodeScanner);
-    setScanning(true);
-  };
-
-  const onScanSuccess = async (decodedText) => {
-    setScanning(false);
-    setResult(decodedText);
-    
-    try {
-      setLoading(true);
-      setError('');
-      
-      await vcApi.uploadFromQr(user.accountId, decodedText);
-      
-      // Success - navigate back to VC list
-      navigate('/vcs');
-    } catch (err) {
-      setError(err);
-      setLoading(false);
     }
   };
 
-  const onScanFailure = (error) => {
-    // Handle scan failure silently
-    console.warn(`QR scan error = ${error}`);
+  const handleError = (err) => {
+    console.warn('QR scan error:', err);
   };
 
   const handleRetry = () => {
     setResult(null);
     setError('');
     setScanning(true);
-    if (scanner) {
-      scanner.clear();
-    }
-    startScanner();
   };
 
   const handleCancel = () => {
@@ -106,9 +78,15 @@ const QrScanner = () => {
           </div>
         )}
 
-        {!loading && !result && (
+        {!loading && !result && scanning && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div id="qr-reader" className="w-full"></div>
+            <QrReader
+              delay={300}
+              onError={handleError}
+              onScan={handleScan}
+              style={{ width: '100%' }}
+              facingMode="environment"
+            />
             
             <div className="mt-4 text-center">
               <p className="text-sm text-gray-500">
@@ -159,4 +137,4 @@ const QrScanner = () => {
   );
 };
 
-export default QrScanner; 
+export default QrScannerPage; 

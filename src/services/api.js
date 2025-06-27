@@ -2,11 +2,25 @@ import axios from 'axios';
 
 // Create axios instance
 export const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: process.env.WALLET_APP_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Add request interceptor to automatically add authorization header
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 // VC API service
 export const vcApi = {

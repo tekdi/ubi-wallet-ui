@@ -4,15 +4,17 @@
   "description": "A simple wallet progressive web app for managing verifiable credentials",
   "scripts": {
     "start": "parcel src/index.html",
+    "start:dev": "parcel src/index.html --host 0.0.0.0",
     "build": "parcel build src/index.html",
     "clean": "rm -rf dist .parcel-cache"
   },
   "dependencies": {
+    "@zxing/library": "^0.21.3",
     "axios": "^1.3.0",
-    "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.263.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-qr-reader": "^2.2.1",
     "react-router-dom": "^6.8.0"
   },
   "devDependencies": {

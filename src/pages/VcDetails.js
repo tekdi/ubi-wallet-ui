@@ -21,7 +21,7 @@ const VcDetails = () => {
     try {
       setLoading(true);
       const data = await vcApi.getVcById(user.accountId, vcId);
-      setVc(data);
+      setVc(data?.data);
     } catch (err) {
       setError(err);
     } finally {
@@ -57,7 +57,7 @@ const VcDetails = () => {
     );
   }
 
-  if (!vc) {
+  if (!vc?.id) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-600">VC not found</p>

@@ -8,12 +8,14 @@ const VcList = () => {
   const [vcs, setVcs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { user } = useAuth();
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchVcs();
-  }, []);
+    if (!authLoading && isAuthenticated && user?.accountId) {
+      fetchVcs();
+    }
+  }, [authLoading, isAuthenticated, user?.accountId]);
 
   const fetchVcs = async () => {
     try {
@@ -35,12 +37,18 @@ const VcList = () => {
     navigate('/qr-scanner');
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
       </div>
     );
+  }
+
+  // If auth is done loading but user is not authenticated, redirect to login
+  if (!authLoading && !isAuthenticated) {
+    navigate('/login');
+    return null;
   }
 
   return (
@@ -83,41 +91,36 @@ const VcList = () => {
           </div>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {vcs.map((vc) => (
-            <div
-              key={vc.id}
-              onClick={() => handleVcClick(vc.id)}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center mb-2">
-                    <FileText className="h-5 w-5 text-primary-600 mr-2" />
-                    <h3 className="text-lg font-medium text-gray-900 truncate">
-                      {vc.name}
-                    </h3>
-                  </div>
-                  
-                  <div className="space-y-2 text-sm text-gray-600">
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead>
+              <tr>
+                <th className="px-4 py-2 border-b text-left text-sm font-semibold text-gray-700">Name</th>
+                <th className="px-4 py-2 border-b text-center text-sm font-semibold text-gray-700">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vcs.map((vc) => (
+                <tr key={vc.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 border-b">
                     <div className="flex items-center">
-                      <User className="h-4 w-4 mr-2" />
-                      <span>{vc.issuer}</span>
+                      <FileText className="h-4 w-4 text-primary-600 mr-2" />
+                      <span className="truncate">{vc.name}</span>
                     </div>
-                    
-                    {vc.issuedAt && (
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        <span>{new Date(vc.issuedAt).toLocaleDateString()}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <Eye className="h-5 w-5 text-gray-400" />
-              </div>
-            </div>
-          ))}
+                  </td>
+                  <td className="px-4 py-3 border-b text-center">
+                    <button
+                      onClick={() => handleVcClick(vc.id)}
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium rounded-md text-primary-700 bg-primary-50 hover:bg-primary-100 focus:outline-none"
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
