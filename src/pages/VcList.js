@@ -21,7 +21,7 @@ const VcList = () => {
     try {
       setLoading(true);
       const data = await vcApi.getAllVcs(user.accountId);
-      setVcs(data);
+      setVcs(data?.data);
     } catch (err) {
       setError(err);
     } finally {

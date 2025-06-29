@@ -39,14 +39,24 @@ export const AuthProvider = ({ children }) => {
         throw new Error(response.data.message || 'Login failed');
       }
 
-      const { token: userToken, accountId } = response.data.data;
+      const { token: userToken, accountId, firstName, lastName, email, phone, username: userUsername } = response.data.data;
+
+      // Create user object with all available information
+      const userInfo = {
+        accountId,
+        firstName: firstName || '',
+        lastName: lastName || '',
+        email: email || '',
+        phone: phone || '',
+        username: userUsername || username
+      };
 
       // Store token and user info
       localStorage.setItem('token', userToken);
-      localStorage.setItem('user', JSON.stringify({ accountId }));
+      localStorage.setItem('user', JSON.stringify(userInfo));
       
       setToken(userToken);
-      setUser({ accountId });
+      setUser(userInfo);
 
       // Set token in API headers
       api.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
