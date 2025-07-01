@@ -25,9 +25,13 @@ Creates a new user account in the wallet system.
 **Request Body:**
 ```json
 {
-  "name": "John Doe",
-  "phone": "+1234567890",
-  "externalUserId": "user_123"
+  "firstName": "string",
+  "lastName": "string",
+  "externalUserId"?:" string",
+  "username": "string",
+  "password": "string",
+  "email"?:" string",
+  "phone"?:" string",
 }
 ```
 

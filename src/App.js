@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import VcList from './pages/VcList';
+import FetchVcs from './pages/fetchVcs';
 import VcDetails from './pages/VcDetails';
 import QrScanner from './pages/QrScanner';
 import Layout from './components/Layout';
@@ -26,6 +27,7 @@ const AppRoutes = () => {
       }>
         <Route index element={<Navigate to="/vcs" />} />
         <Route path="vcs" element={<VcList />} />
+        <Route path="fetch-vcs" element={<FetchVcs />} />
         <Route path="vcs/:vcId" element={<VcDetails />} />
         <Route path="profile" element={<Profile />} />
         <Route path="qr-scanner" element={<QrScanner />} />
