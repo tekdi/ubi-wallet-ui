@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
 import QrReader from 'react-qr-reader';
@@ -13,35 +13,68 @@ const QrScannerPage = () => {
   const [cameraError, setCameraError] = useState('');
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const qrReaderRef = useRef(null);
+
+  // Get the source page from URL search params or default to '/vcs'
+  const searchParams = new URLSearchParams(location.search);
+  const sourcePage = searchParams.get('from') || '/vcs';
+
+  useEffect(() => {
+    // Cleanup function to turn off camera when component unmounts
+    return () => {
+      turnOffCamera();
+    };
+  }, []);
+
+  const turnOffCamera = () => {
+    if (qrReaderRef.current) {
+      try {
+        // Stop the QR reader and turn off camera
+        qrReaderRef.current.stopCamera();
+      } catch (err) {
+        console.warn('Error stopping camera:', err);
+      }
+    }
+  };
 
   const handleScan = async (data) => {
     if (data && scanning) {
+      console.log('QR Code detected:', data);
       setScanning(false);
       setResult(data);
-
+      
+      // Turn off camera immediately after successful scan
+      turnOffCamera();
+      
       try {
         setLoading(true);
         setError('');
-
+        
         const res = await vcApi.uploadFromQr(user.accountId, data);
 
         if (res?.statusCode !== 200) {
           setResult(null);
           setError(res.message);
           setScanning(true);
+        } else {
+          // Success - navigate back to the source page
+          navigate(sourcePage);
         }
-        
-        // Success - navigate back to VC list
-        navigate('/vcs');
       } catch (err) {
         setError(err);
         setLoading(false);
+        // Turn off camera on error
+        turnOffCamera();
       }
     }
   };
 
   const handleError = (err) => {
     console.warn('QR scan error:', err);
+    
+    // Turn off camera on error
+    turnOffCamera();
     
     // Handle different types of camera errors
     if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
@@ -67,7 +100,9 @@ const QrScannerPage = () => {
   };
 
   const handleCancel = () => {
-    navigate('/vcs');
+    // Turn off camera before navigating back to source page
+    turnOffCamera();
+    navigate(sourcePage);
   };
 
   return (
@@ -78,7 +113,7 @@ const QrScannerPage = () => {
           className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to VCs
+          Back to {sourcePage === '/fetch-vcs' ? 'Share VCs' : 'VCs'}
         </button>
       </div>
 
@@ -117,9 +152,10 @@ const QrScannerPage = () => {
           </div>
         )}
 
-        {!loading && !result && scanning && !cameraError && (
+        {!loading && !result && scanning && !cameraError && !error && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <QrReader
+              ref={qrReaderRef}
               delay={300}
               onError={handleError}
               onScan={handleScan}
@@ -138,21 +174,17 @@ const QrScannerPage = () => {
         {result && !loading && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="text-center">
-              {!error && (
-                <div className="flex flex-col items-center">
-                <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  QR Code Scanned Successfully!
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    The credential has been added to your wallet.
-                  </p>
-                </div>
-              )}
+              <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                QR Code Scanned Successfully!
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                The credential has been added to your wallet.
+              </p>
               
               <div className="space-y-3">
                 <button
-                  onClick={() => navigate('/vcs')}
+                  onClick={() => navigate(sourcePage)}
                   className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 >
                   View My VCs

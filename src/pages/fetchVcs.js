@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
-import { QrCode, FileText, CheckSquare, Square, Share, AlertCircle } from 'lucide-react';
+import { QrCode, FileText, CheckSquare, Square, Share, AlertCircle, Plus } from 'lucide-react';
 
 const FetchVcs = () => {
   const [vcs, setVcs] = useState([]);
@@ -11,6 +12,7 @@ const FetchVcs = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const { user, loading: authLoading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!authLoading && isAuthenticated && user?.accountId) {
@@ -48,6 +50,10 @@ const FetchVcs = () => {
     }
   };
 
+  const handleAddVc = () => {
+    navigate('/qr-scanner?from=/fetch-vcs');
+  };
+
   const handleShareVcs = async () => {
     if (selectedVcs.length === 0) {
       setError('Please select at least one credential to share.');
@@ -78,13 +84,26 @@ const FetchVcs = () => {
           }
         };
 
-        // Send to parent window
-        window.parent.postMessage(message, '*');
+        // Get allowed origins from environment variable
+        const allowedOrigins = process.env.PARENT_APP_ALLOWED_ORIGIN 
+          ? process.env.PARENT_APP_ALLOWED_ORIGIN.split(',').map(origin => origin.trim())
+          : ['*'];
 
-        setSuccess(`Successfully shared ${selectedVcData.length} credential(s) with the parent application.`);
+        // Get the parent origin
+        const parentOrigin = window.parent.location.origin;
         
-        // Clear selection after successful share
-        setSelectedVcs([]);
+        // Check if parent origin is in the allowed list
+        const isOriginAllowed = allowedOrigins.includes('*') || allowedOrigins.includes(parentOrigin);
+        
+        if (isOriginAllowed) {
+          // Send message to the specific parent origin
+          window.parent.postMessage(message, parentOrigin);
+          setSuccess(`Successfully shared ${selectedVcData.length} credential(s) with the parent application.`);
+          // Clear selection after successful share
+          setSelectedVcs([]);
+        } else {
+          setError(`Sharing not allowed with origin: ${parentOrigin}. Please contact administrator.`);
+        }
       } else {
         setError('This page must be embedded in an iframe to share credentials.');
       }
@@ -124,6 +143,12 @@ const FetchVcs = () => {
           <h1 className="text-2xl font-bold text-gray-900">Select Credentials to Share</h1>
           <p className="text-gray-600">Choose the credentials you want to share with the parent application</p>
         </div>
+        <button
+          onClick={handleAddVc}
+          className="inline-flex items-center px-1 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+        >
+          Add VC
+        </button>
       </div>
 
       {error && (

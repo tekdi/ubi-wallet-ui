@@ -11,7 +11,7 @@ export const api = axios.create({
 // Add request interceptor to automatically add authorization header
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('walletToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

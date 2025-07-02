@@ -34,7 +34,7 @@ const VcList = () => {
   };
 
   const handleAddVc = () => {
-    navigate('/qr-scanner');
+    navigate('/qr-scanner?from=/vcs');
   };
 
   if (authLoading || loading) {
@@ -60,9 +60,8 @@ const VcList = () => {
         </div>
         <button
           onClick={handleAddVc}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          className="inline-flex items-center px-1 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
         >
-          <Plus className="h-4 w-4 mr-2" />
           Add VC
         </button>
       </div>

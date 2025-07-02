@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(localStorage.getItem('walletToken'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       };
 
       // Store token and user info
-      localStorage.setItem('token', userToken);
+      localStorage.setItem('walletToken', userToken);
       localStorage.setItem('user', JSON.stringify(userInfo));
       
       setToken(userToken);
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('walletToken');
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
