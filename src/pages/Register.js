@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authApi } from '../services/api';
-import { User, Lock, Mail, Phone, UserPlus, ArrowRight, ArrowLeft } from 'lucide-react';
+import { User, Lock, Mail, Phone, UserPlus, ArrowRight, ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -14,17 +14,49 @@ const Register = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    if (password.length < minLength) return 'Password must be at least 8 characters long';
+    if (!hasUpperCase) return 'Password must contain at least one uppercase letter';
+    if (!hasLowerCase) return 'Password must contain at least one lowercase letter';
+    if (!hasNumbers) return 'Password must contain at least one number';
+    if (!hasSpecialChar) return 'Password must contain at least one special character';
+    return '';
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+
+    // Validate password in real-time
+    if (name === 'password') {
+      const validationError = validatePassword(value);
+      setPasswordError(validationError);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check password validation before submitting
+    const passwordValidation = validatePassword(formData.password);
+    if (passwordValidation) {
+      setPasswordError(passwordValidation);
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -64,17 +96,22 @@ const Register = () => {
               <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
                 First Name
               </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                autoComplete="given-name"
-                required
-                value={formData.firstName}
-                onChange={handleChange}
-                className="mt-1 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your first name"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  required
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                  placeholder="Enter your first name"
+                />
+              </div>
             </div>
 
             {/* Last Name */}
@@ -82,17 +119,22 @@ const Register = () => {
               <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
                 Last Name
               </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                autoComplete="family-name"
-                required
-                value={formData.lastName}
-                onChange={handleChange}
-                className="mt-1 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your last name"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  required
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                  placeholder="Enter your last name"
+                />
+              </div>
             </div>
 
             {/* Username */}
@@ -176,15 +218,38 @@ const Register = () => {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
                   placeholder="Create a password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showPassword ? (
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  ) : (
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
               </div>
+              {passwordError && (
+                <div className="mt-1 flex items-center text-sm text-red-600">
+                  <XCircle className="h-4 w-4 mr-1" />
+                  {passwordError}
+                </div>
+              )}
+              {formData.password && !passwordError && (
+                <div className="mt-1 flex items-center text-sm text-green-600">
+                  <CheckCircle className="h-4 w-4 mr-1" />
+                  Password meets all requirements
+                </div>
+              )}
             </div>
           </div>
 
@@ -195,7 +260,7 @@ const Register = () => {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || passwordError}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (

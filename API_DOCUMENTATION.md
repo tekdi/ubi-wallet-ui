@@ -95,7 +95,7 @@ Verifies the OTP and completes the login process.
 **Response:**
 ```json
 {
-  "token": "user_token_123456",
+  "token": "YOUR_TOKEN_HERE",
   "accountId": "user_123",
   "message": "Login successful"
 }
@@ -297,7 +297,7 @@ curl -X POST http://localhost:3000/api/wallet/login/verify \
 3. **Get User's VCs:**
 ```bash
 curl -X GET http://localhost:3000/api/wallet/user_123/vcs \
-  -H "Authorization: Bearer user_token_123456"
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ### User Onboarding
