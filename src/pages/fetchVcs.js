@@ -116,8 +116,6 @@ const FetchVcs = () => {
         
         if (isOriginAllowed) {
           // Send message to the specific parent origin
-          console.log(message);
-          console.log(parentOrigin);
           window.parent.postMessage(message, parentOrigin);
           setSuccess(`Successfully shared ${selectedVcData.length} credential(s) with the parent application.`);
           // Clear selection after successful share
