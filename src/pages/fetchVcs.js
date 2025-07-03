@@ -103,46 +103,18 @@ const FetchVcs = () => {
           }
         };
 
-        // Get allowed origins from environment variable or use default
-        const allowedOrigins = process.env.PARENT_APP_ALLOWED_ORIGIN 
-          ? process.env.PARENT_APP_ALLOWED_ORIGIN.split(',').map(origin => origin.trim())
-          : ['http://localhost:5431', '*']; // Default to allow localhost:5431 and all origins
+        // Get the parent origin
+        const parentOrigin = process.env.PARENT_APP_ALLOWED_ORIGIN;
 
-        // For cross-origin iframes, we can't read parent.location.origin directly
-        // We'll use a more secure approach by sending to '*' and letting the parent validate
-        let targetOrigin = '*';
-        
-        // Only try to get specific origin if we're in same-origin context
-        if (window.parent === window) {
-          setError('This page must be embedded in an iframe to share credentials.');
-          return;
-        }
-        
-        // Check if we can access parent origin (same-origin only)
         try {
-          // This will only work for same-origin iframes
-          const parentOrigin = window.parent.location.origin;
-          if (allowedOrigins.includes('*') || allowedOrigins.includes(parentOrigin)) {
-            targetOrigin = parentOrigin;
-          } else {
-            setError(`Sharing not allowed with origin: ${parentOrigin}. Please contact administrator.`);
-            return;
-          }
+          // Send message to the specific parent origin
+          window.parent.postMessage(message, parentOrigin);
+          setSuccess(`Successfully shared ${selectedVcData.length} credential(s) with the parent application.`);
+          // Clear selection after successful share
+          setSelectedVcs([]);
         } catch (error) {
-          // Cross-origin case: use '*' as target origin
-          if (!allowedOrigins.includes('*')) {
-            setError('Cross-origin sharing is not allowed. Please contact administrator.');
-            return;
-          }
-          // targetOrigin remains '*' for cross-origin
+          setError(`Sharing not allowed with origin: ${parentOrigin}. Please contact administrator.`);
         }
-        
-        // Send the message
-        window.parent.postMessage(message, targetOrigin);
-        
-        setSuccess(`Successfully shared ${selectedVcData.length} credential(s) with the parent application.`);
-        // Clear selection after successful share
-        setSelectedVcs([]);
       } else {
         setError('This page must be embedded in an iframe to share credentials.');
       }
