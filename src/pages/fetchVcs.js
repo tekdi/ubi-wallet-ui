@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
-import { QrCode, FileText, CheckSquare, Square, Share, AlertCircle, Plus } from 'lucide-react';
+import { QrCode, FileText, CheckSquare, Square, Share, AlertCircle, Plus, Calendar, CalendarDays, User } from 'lucide-react';
 
 const FetchVcs = () => {
   const [vcs, setVcs] = useState([]);
@@ -54,6 +54,24 @@ const FetchVcs = () => {
     navigate('/qr-scanner?from=/fetch-vcs');
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Invalid Date';
+    }
+  };
+
+  const isExpired = (expiryDate) => {
+    if (!expiryDate) return false;
+    return new Date(expiryDate) < new Date();
+  };
+
   const handleShareVcs = async () => {
     if (selectedVcs.length === 0) {
       setError('Please select at least one credential to share.');
@@ -74,7 +92,7 @@ const FetchVcs = () => {
       const vcDataToShare = selectedVcData.map(response => response.data);
 
       // Send data to parent window via postMessage
-      if (window.parent && window.parent !== window) {
+      if (1) {
         const message = {
           type: 'VC_SHARED',
           data: {
@@ -97,6 +115,8 @@ const FetchVcs = () => {
         
         if (isOriginAllowed) {
           // Send message to the specific parent origin
+          console.log(message);
+          console.log(parentOrigin);
           window.parent.postMessage(message, parentOrigin);
           setSuccess(`Successfully shared ${selectedVcData.length} credential(s) with the parent application.`);
           // Clear selection after successful share
@@ -145,8 +165,9 @@ const FetchVcs = () => {
         </div>
         <button
           onClick={handleAddVc}
-          className="inline-flex items-center px-1 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
         >
+          <Plus className="h-4 w-4 mr-2" />
           Add VC
         </button>
       </div>
@@ -175,55 +196,110 @@ const FetchVcs = () => {
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 border-b text-left">
-                  <button
-                    onClick={handleSelectAll}
-                    className="flex items-center text-sm font-semibold text-gray-700 hover:text-gray-900"
-                  >
-                    {selectedVcs.length === vcs.length ? (
-                      <CheckSquare className="h-4 w-4 mr-2 text-primary-600" />
-                    ) : (
-                      <Square className="h-4 w-4 mr-2 text-gray-400" />
-                    )}
-                    {selectedVcs.length === vcs.length ? 'Deselect All' : 'Select All'}
-                  </button>
-                </th>
-                <th className="px-4 py-2 border-b text-left text-sm font-semibold text-gray-700">Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vcs.map((vc) => (
-                <tr key={vc.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 border-b">
-                    <button
-                      onClick={() => handleVcSelection(vc.id)}
-                      className="flex items-center"
-                    >
-                      {selectedVcs.includes(vc.id) ? (
-                        <CheckSquare className="h-4 w-4 text-primary-600" />
-                      ) : (
-                        <Square className="h-4 w-4 text-gray-400" />
-                      )}
-                    </button>
-                  </td>
-                  <td className="px-4 py-3 border-b">
-                    <div className="flex items-center">
-                      <FileText className="h-4 w-4 text-primary-600 mr-2" />
-                      <span className="truncate">{vc.name || vc.id}</span>
+        <div>
+          {/* Select All Button */}
+          <div className="mb-4">
+            <button
+              onClick={handleSelectAll}
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            >
+              {selectedVcs.length === vcs.length ? (
+                <CheckSquare className="h-4 w-4 mr-2 text-primary-600" />
+              ) : (
+                <Square className="h-4 w-4 mr-2 text-gray-400" />
+              )}
+              {selectedVcs.length === vcs.length ? 'Deselect All' : 'Select All'}
+            </button>
+          </div>
+
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {vcs.map((vc) => (
+              <div
+                key={vc.id}
+                className={`bg-white border rounded-lg shadow-sm transition-all duration-200 cursor-pointer group ${
+                  selectedVcs.includes(vc.id) 
+                    ? 'border-primary-500 shadow-md ring-2 ring-primary-200' 
+                    : 'border-gray-200 hover:shadow-md'
+                }`}
+                onClick={() => handleVcSelection(vc.id)}
+              >
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center flex-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVcSelection(vc.id);
+                        }}
+                        className="mr-3 mt-1"
+                      >
+                        {selectedVcs.includes(vc.id) ? (
+                          <CheckSquare className="h-5 w-5 text-primary-600" />
+                        ) : (
+                          <Square className="h-5 w-5 text-gray-400 group-hover:text-primary-400" />
+                        )}
+                      </button>
+                      <div className="flex-1">
+                        <div className="flex items-center">
+                          <FileText className="h-5 w-5 text-primary-600 mr-2" />
+                          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                            {vc.name || 'Unnamed Credential'}
+                          </h3>
+                        </div>
+                      </div>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Calendar className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="font-medium">Issued:</span>
+                      <span className="ml-1">{formatDate(vc.issuedAt)}</span>
+                    </div>
+
+                    <div className="flex items-center text-sm">
+                      <CalendarDays className="h-4 w-4 mr-2 text-gray-400" />
+                      <span className="font-medium text-gray-600">Expires:</span>
+                      <span className={`ml-1 ${isExpired(vc.expiresAt) ? 'text-red-600' : 'text-gray-600'}`}>
+                        {formatDate(vc.expiresAt)}
+                      </span>
+                      {isExpired(vc.expiresAt) && (
+                        <span className="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                          Expired
+                        </span>
+                      )}
+                    </div>
+
+                    {vc.issuer && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <User className="h-4 w-4 mr-2 text-gray-400" />
+                        <span className="font-medium">Issuer:</span>
+                        <span className="ml-1 truncate">{vc.issuer}</span>
+                      </div>
+                    )}
+
+                    {vc.status && (
+                      <div className="flex items-center">
+                        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          vc.status === 'active' ? 'bg-green-100 text-green-800' :
+                          vc.status === 'expired' ? 'bg-red-100 text-red-800' :
+                          vc.status === 'revoked' ? 'bg-gray-100 text-gray-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {vc.status.charAt(0).toUpperCase() + vc.status.slice(1)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
           
-          {/* Action Section Below Table */}
+          {/* Share Button */}
           {selectedVcs.length > 0 && (
-            <div className="mt-6">
+            <div className="mt-8">
               <div className="flex items-center justify-center">
                 <button
                   onClick={handleShareVcs}
