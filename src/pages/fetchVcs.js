@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
-import { QrCode, FileText, CheckSquare, Square, Share, AlertCircle, Plus, Calendar, CalendarDays, User } from 'lucide-react';
+import { QrCode, CheckSquare, Square, Share, AlertCircle, Plus, FileText, Calendar, CalendarDays, User } from 'lucide-react';
+import VcCard from '../components/VcCard';
 
 const FetchVcs = () => {
   const [vcs, setVcs] = useState([]);
@@ -92,7 +93,7 @@ const FetchVcs = () => {
       const vcDataToShare = selectedVcData.map(response => response.data);
 
       // Send data to parent window via postMessage
-      if (1) {
+      if (window.parent && window.parent !== window) {
         const message = {
           type: 'VC_SHARED',
           data: {
