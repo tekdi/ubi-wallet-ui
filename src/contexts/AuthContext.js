@@ -18,14 +18,135 @@ export const AuthProvider = ({ children }) => {
   });
   const [token, setToken] = useState(localStorage.getItem('walletToken'));
   const [loading, setLoading] = useState(true);
+  const [isEmbedded, setIsEmbedded] = useState(false);
+  const [waitingForParentAuth, setWaitingForParentAuth] = useState(false);
+
+  useEffect(() => {
+    // Check if we're in an iframe
+    const embedded = window.parent && window.parent !== window;
+    setIsEmbedded(embedded);
+
+    // If we have existing auth data, use it immediately
+    const existingToken = localStorage.getItem('walletToken');
+    const existingUser = localStorage.getItem('user');
+
+    if (existingToken && existingUser) {
+      try {
+        const userObj = JSON.parse(existingUser);
+        setToken(existingToken);
+        setUser(userObj);
+        setLoading(false);
+        setWaitingForParentAuth(false);
+        return;
+      } catch (error) {
+        console.error('Error parsing existing user data:', error);
+      }
+    }
+
+    // If we're embedded and don't have auth data, wait for parent to send it
+    if (embedded && (!existingToken || !existingUser)) {
+      setWaitingForParentAuth(true);
+      // Set a timeout to stop waiting after reasonable time
+      const timeout = setTimeout(() => {
+        setWaitingForParentAuth(false);
+        setLoading(false);
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (token) {
       // Set token in API headers
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
-    setLoading(false);
-  }, [token]);
+
+    // Update loading state when we have authentication data
+    if (token && user) {
+      setLoading(false);
+      setWaitingForParentAuth(false);
+    }
+  }, [token, user]);
+
+  // Listen for authentication data from parent window (for iframe embedding)
+  useEffect(() => {
+    const handleMessage = (event) => {
+      // Add origin validation if needed
+      // if (event.origin !== 'your-parent-origin') return;
+
+      console.log('Received message from parent:', event.data);
+
+      if (event.data?.type === 'WALLET_AUTH' && event.data?.data) {
+        const { walletToken, user: userData, embeddedMode } = event.data.data;
+        if (walletToken && userData) {
+          // Handle user data - it might be a string or object
+          let userObject;
+          if (typeof userData === 'string') {
+            try {
+              userObject = JSON.parse(userData);
+            } catch (error) {
+              console.error('Failed to parse user data:', error);
+              return;
+            }
+          } else {
+            userObject = userData;
+          }
+
+          // Store the authentication data in localStorage
+          localStorage.setItem('walletToken', walletToken);
+          localStorage.setItem('user', JSON.stringify(userObject));
+          if (embeddedMode) {
+            localStorage.setItem('embeddedMode', 'true');
+          }
+
+          // Update state immediately
+          setToken(walletToken);
+          setUser(userObject);
+          setWaitingForParentAuth(false);
+          setLoading(false);
+
+          // Set token in API headers
+          api.defaults.headers.common['Authorization'] = `Bearer ${walletToken}`;
+
+          console.log('Authentication data received and processed from parent window');
+        }
+      }
+    };
+
+    // Only listen for messages if we're in an iframe
+    if (isEmbedded) {
+      window.addEventListener('message', handleMessage);
+
+      // Send a ready message to parent to indicate iframe is loaded
+      const readyMessage = {
+        type: 'IFRAME_READY',
+        data: { timestamp: new Date().toISOString() }
+      };
+
+      // Send ready message after a short delay to ensure parent is ready
+      const sendReadyMessage = () => {
+        try {
+          window.parent.postMessage(readyMessage, '*');
+          console.log('Sent IFRAME_READY message to parent');
+        } catch (error) {
+          console.error('Failed to send ready message to parent:', error);
+        }
+      };
+
+      // Send immediately and also after a delay
+      sendReadyMessage();
+      const delayedTimeout = setTimeout(sendReadyMessage, 100);
+
+      // Clean up event listener and timeout
+      return () => {
+        window.removeEventListener('message', handleMessage);
+        clearTimeout(delayedTimeout);
+      };
+    }
+  }, [isEmbedded]);
 
   const login = async (username, password) => {
     try {
@@ -81,8 +202,9 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     token,
-    loading,
+    loading: loading || waitingForParentAuth,
     isAuthenticated,
+    isEmbedded,
     login,
     logout
   };
