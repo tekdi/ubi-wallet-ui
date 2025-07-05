@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }, 3000);
 
-      return () => clearTimeout(timeout);
+      return () => clearTimeout(timeout)
     } else {
       setLoading(false);
     }
@@ -76,7 +76,11 @@ export const AuthProvider = ({ children }) => {
     const handleMessage = (event) => {
       // Validate origin - only accept messages from the configured parent origin
       const allowedOrigin = process.env.PARENT_APP_ALLOWED_ORIGIN;
-      if (allowedOrigin && event.origin !== allowedOrigin) {
+      if (!allowedOrigin) {
+        console.error('PARENT_APP_ALLOWED_ORIGIN environment variable is not configured');
+        return;
+      }
+      if (event.origin !== allowedOrigin) {
         console.warn('Rejected message from untrusted origin:', event.origin, 'Expected:', allowedOrigin);
         return;
       }
@@ -134,8 +138,11 @@ export const AuthProvider = ({ children }) => {
       const sendReadyMessage = () => {
         try {
           // Use the configured parent origin or fall back to document.referrer origin
-          const targetOrigin = process.env.PARENT_APP_ALLOWED_ORIGIN ||
-                              (document.referrer ? new URL(document.referrer).origin : window.location.origin);
+          const targetOrigin = process.env.PARENT_APP_ALLOWED_ORIGIN;
+          if (!targetOrigin) {
+            console.error('PARENT_APP_ALLOWED_ORIGIN environment variable is not configured');
+            return;
+          }
           window.parent.postMessage(readyMessage, targetOrigin);
           console.log('Sent IFRAME_READY message to parent at origin:', targetOrigin);
         } catch (error) {
