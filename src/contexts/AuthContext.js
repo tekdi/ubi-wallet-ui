@@ -74,10 +74,14 @@ export const AuthProvider = ({ children }) => {
   // Listen for authentication data from parent window (for iframe embedding)
   useEffect(() => {
     const handleMessage = (event) => {
-      // Add origin validation if needed
-      // if (event.origin !== 'your-parent-origin') return;
+      // Validate origin - only accept messages from the configured parent origin
+      const allowedOrigin = process.env.PARENT_APP_ALLOWED_ORIGIN;
+      if (allowedOrigin && event.origin !== allowedOrigin) {
+        console.warn('Rejected message from untrusted origin:', event.origin, 'Expected:', allowedOrigin);
+        return;
+      }
 
-      console.log('Received message from parent:', event.data);
+      console.log('Received message from parent');
 
       if (event.data?.type === 'WALLET_AUTH' && event.data?.data) {
         const { walletToken, user: userData, embeddedMode } = event.data.data;
@@ -129,8 +133,11 @@ export const AuthProvider = ({ children }) => {
       // Send ready message after a short delay to ensure parent is ready
       const sendReadyMessage = () => {
         try {
-          window.parent.postMessage(readyMessage, '*');
-          console.log('Sent IFRAME_READY message to parent');
+          // Use the configured parent origin or fall back to document.referrer origin
+          const targetOrigin = process.env.PARENT_APP_ALLOWED_ORIGIN ||
+                              (document.referrer ? new URL(document.referrer).origin : window.location.origin);
+          window.parent.postMessage(readyMessage, targetOrigin);
+          console.log('Sent IFRAME_READY message to parent at origin:', targetOrigin);
         } catch (error) {
           console.error('Failed to send ready message to parent:', error);
         }
