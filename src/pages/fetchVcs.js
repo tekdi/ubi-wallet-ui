@@ -148,19 +148,12 @@ const FetchVcs = () => {
   }
 
   return (
-    <div>
+    <div className="relative min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Select Credentials to Share</h1>
           <p className="text-gray-600">Choose the credentials you want to share with the parent application</p>
         </div>
-        <button
-          onClick={handleAddVc}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add VC
-        </button>
       </div>
 
       {error && (
@@ -314,6 +307,15 @@ const FetchVcs = () => {
           )}
         </div>
       )}
+
+      {/* Floating Action Button */}
+      <button
+        onClick={handleAddVc}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 z-50 flex items-center justify-center"
+        title="Add Verifiable Credential"
+      >
+        <QrCode className="h-6 w-6" />
+      </button>
     </div>
   );
 };
