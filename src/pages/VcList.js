@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
-import { QrCode, Plus } from 'lucide-react';
+import { QrCode } from 'lucide-react';
 import VcCard from '../components/VcCard';
 import { formatDate, isExpired } from '../utils/dateUtils';
 
