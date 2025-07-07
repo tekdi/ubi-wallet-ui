@@ -9,15 +9,17 @@
  */
 export const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
-  try {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  } catch (error) {
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
     return 'Invalid Date';
   }
+
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
 };
 
 /**
