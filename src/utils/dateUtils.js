@@ -25,9 +25,16 @@ export const formatDate = (dateString) => {
 /**
  * Checks if a date has expired
  * @param {string} expiryDate - The expiry date to check
- * @returns {boolean} True if the date has expired, false otherwise
+ * @returns {boolean} True if the date has expired or is invalid date, false otherwise
  */
 export const isExpired = (expiryDate) => {
-  if (!expiryDate) return false;
-  return new Date(expiryDate) < new Date();
+  if (!expiryDate) return true;
+
+  const date = new Date(expiryDate);
+
+  if (isNaN(date.getTime())) {
+    return true; // Invalid dates are considered as expired
+  }
+
+  return date < new Date();
 }; 
