@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
 import { QrCode, Plus } from 'lucide-react';
 import VcCard from '../components/VcCard';
+import { formatDate, isExpired } from '../utils/dateUtils';
 
 const VcList = () => {
   const [vcs, setVcs] = useState([]);
@@ -37,24 +38,6 @@ const VcList = () => {
 
   const handleAddVc = () => {
     navigate('/qr-scanner?from=/vcs');
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch (error) {
-      return 'Invalid Date';
-    }
-  };
-
-  const isExpired = (expiryDate) => {
-    if (!expiryDate) return false;
-    return new Date(expiryDate) < new Date();
   };
 
   if (authLoading || loading) {

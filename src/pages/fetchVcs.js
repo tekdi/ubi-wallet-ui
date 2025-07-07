@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
 import { QrCode, CheckSquare, Square, Share, AlertCircle, Plus, FileText, Calendar, CalendarDays, User } from 'lucide-react';
 import VcCard from '../components/VcCard';
+import { formatDate, isExpired } from '../utils/dateUtils';
 
 const FetchVcs = () => {
   const [vcs, setVcs] = useState([]);
@@ -53,24 +54,6 @@ const FetchVcs = () => {
 
   const handleAddVc = () => {
     navigate('/qr-scanner?from=/fetch-vcs');
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch (error) {
-      return 'Invalid Date';
-    }
-  };
-
-  const isExpired = (expiryDate) => {
-    if (!expiryDate) return false;
-    return new Date(expiryDate) < new Date();
   };
 
   const handleShareVcs = async () => {
