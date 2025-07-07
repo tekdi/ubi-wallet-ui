@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
-import { QrCode, CheckSquare, Square, Share, AlertCircle, Plus, FileText, Calendar, CalendarDays, User } from 'lucide-react';
+import { QrCode, CheckSquare, Square, Share, AlertCircle } from 'lucide-react';
 import VcCard from '../components/VcCard';
+import { formatDate, isExpired } from '../utils/dateUtils';
 
 const FetchVcs = () => {
   const [vcs, setVcs] = useState([]);
@@ -55,24 +56,6 @@ const FetchVcs = () => {
     navigate('/qr-scanner?from=/fetch-vcs');
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch (error) {
-      return 'Invalid Date';
-    }
-  };
-
-  const isExpired = (expiryDate) => {
-    if (!expiryDate) return false;
-    return new Date(expiryDate) < new Date();
-  };
-
   const handleShareVcs = async () => {
     if (selectedVcs.length === 0) {
       setError('Please select at least one credential to share.');
@@ -103,46 +86,18 @@ const FetchVcs = () => {
           }
         };
 
-        // Get allowed origins from environment variable or use default
-        const allowedOrigins = process.env.PARENT_APP_ALLOWED_ORIGIN 
-          ? process.env.PARENT_APP_ALLOWED_ORIGIN.split(',').map(origin => origin.trim())
-          : ['http://localhost:5431', '*']; // Default to allow localhost:5431 and all origins
+        // Get the parent origin
+        const parentOrigin = process.env.REACT_APP_PARENT_APP_ALLOWED_ORIGIN;
 
-        // For cross-origin iframes, we can't read parent.location.origin directly
-        // We'll use a more secure approach by sending to '*' and letting the parent validate
-        let targetOrigin = '*';
-        
-        // Only try to get specific origin if we're in same-origin context
-        if (window.parent === window) {
-          setError('This page must be embedded in an iframe to share credentials.');
-          return;
-        }
-        
-        // Check if we can access parent origin (same-origin only)
         try {
-          // This will only work for same-origin iframes
-          const parentOrigin = window.parent.location.origin;
-          if (allowedOrigins.includes('*') || allowedOrigins.includes(parentOrigin)) {
-            targetOrigin = parentOrigin;
-          } else {
-            setError(`Sharing not allowed with origin: ${parentOrigin}. Please contact administrator.`);
-            return;
-          }
+          // Send message to the specific parent origin
+          window.parent.postMessage(message, parentOrigin);
+          setSuccess(`Successfully shared ${selectedVcData.length} credential(s) with the parent application.`);
+          // Clear selection after successful share
+          setSelectedVcs([]);
         } catch (error) {
-          // Cross-origin case: use '*' as target origin
-          if (!allowedOrigins.includes('*')) {
-            setError('Cross-origin sharing is not allowed. Please contact administrator.');
-            return;
-          }
-          // targetOrigin remains '*' for cross-origin
+          setError(`Sharing not allowed with origin: ${parentOrigin}. Please contact administrator.`);
         }
-        
-        // Send the message
-        window.parent.postMessage(message, targetOrigin);
-        
-        setSuccess(`Successfully shared ${selectedVcData.length} credential(s) with the parent application.`);
-        // Clear selection after successful share
-        setSelectedVcs([]);
       } else {
         setError('This page must be embedded in an iframe to share credentials.');
       }
@@ -176,19 +131,12 @@ const FetchVcs = () => {
   }
 
   return (
-    <div>
+    <div className="relative min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Select Credentials to Share</h1>
           <p className="text-gray-600">Choose the credentials you want to share with the parent application</p>
         </div>
-        <button
-          onClick={handleAddVc}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add VC
-        </button>
       </div>
 
       {error && (
@@ -234,85 +182,15 @@ const FetchVcs = () => {
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {vcs.map((vc) => (
-              <div
+              <VcCard
                 key={vc.id}
-                className={`bg-white border rounded-lg shadow-sm transition-all duration-200 cursor-pointer group ${
-                  selectedVcs.includes(vc.id) 
-                    ? 'border-primary-500 shadow-md ring-2 ring-primary-200' 
-                    : 'border-gray-200 hover:shadow-md'
-                }`}
-                onClick={() => handleVcSelection(vc.id)}
-              >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center flex-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleVcSelection(vc.id);
-                        }}
-                        className="mr-3 mt-1"
-                      >
-                        {selectedVcs.includes(vc.id) ? (
-                          <CheckSquare className="h-5 w-5 text-primary-600" />
-                        ) : (
-                          <Square className="h-5 w-5 text-gray-400 group-hover:text-primary-400" />
-                        )}
-                      </button>
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          <FileText className="h-5 w-5 text-primary-600 mr-2" />
-                          <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
-                            {vc.name || 'Unnamed Credential'}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                      <span className="font-medium">Issued:</span>
-                      <span className="ml-1">{formatDate(vc.issuedAt)}</span>
-                    </div>
-
-                    <div className="flex items-center text-sm">
-                      <CalendarDays className="h-4 w-4 mr-2 text-gray-400" />
-                      <span className="font-medium text-gray-600">Expires:</span>
-                      <span className={`ml-1 ${isExpired(vc.expiresAt) ? 'text-red-600' : 'text-gray-600'}`}>
-                        {formatDate(vc.expiresAt)}
-                      </span>
-                      {isExpired(vc.expiresAt) && (
-                        <span className="ml-2 px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                          Expired
-                        </span>
-                      )}
-                    </div>
-
-                    {vc.issuer && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <User className="h-4 w-4 mr-2 text-gray-400" />
-                        <span className="font-medium">Issuer:</span>
-                        <span className="ml-1 truncate">{vc.issuer}</span>
-                      </div>
-                    )}
-
-                    {vc.status && (
-                      <div className="flex items-center">
-                        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          vc.status === 'active' ? 'bg-green-100 text-green-800' :
-                          vc.status === 'expired' ? 'bg-red-100 text-red-800' :
-                          vc.status === 'revoked' ? 'bg-gray-100 text-gray-800' :
-                          'bg-blue-100 text-blue-800'
-                        }`}>
-                          {vc.status.charAt(0).toUpperCase() + vc.status.slice(1)}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+                vc={vc}
+                mode="select"
+                isSelected={selectedVcs.includes(vc.id)}
+                onSelectionChange={handleVcSelection}
+                formatDate={formatDate}
+                isExpired={isExpired}
+              />
             ))}
           </div>
           
@@ -342,8 +220,17 @@ const FetchVcs = () => {
           )}
         </div>
       )}
+
+      {/* Floating Action Button */}
+      <button
+        onClick={handleAddVc}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 z-50 flex items-center justify-center"
+        title="Add Verifiable Credential"
+      >
+        <QrCode className="h-6 w-6" />
+      </button>
     </div>
   );
 };
 
-export default FetchVcs; 
+export default FetchVcs;

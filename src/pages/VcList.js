@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
-import { QrCode, Plus } from 'lucide-react';
+import { QrCode } from 'lucide-react';
 import VcCard from '../components/VcCard';
+import { formatDate, isExpired } from '../utils/dateUtils';
 
 const VcList = () => {
   const [vcs, setVcs] = useState([]);
@@ -22,7 +23,6 @@ const VcList = () => {
     try {
       setLoading(true);
       const data = await vcApi.getAllVcs(user.accountId);
-      console.log(data);
       setVcs(data?.data);
     } catch (err) {
       setError(err);
@@ -37,24 +37,6 @@ const VcList = () => {
 
   const handleAddVc = () => {
     navigate('/qr-scanner?from=/vcs');
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch (error) {
-      return 'Invalid Date';
-    }
-  };
-
-  const isExpired = (expiryDate) => {
-    if (!expiryDate) return false;
-    return new Date(expiryDate) < new Date();
   };
 
   if (authLoading || loading) {
@@ -72,19 +54,12 @@ const VcList = () => {
   }
 
   return (
-    <div>
+    <div className="relative min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">My Verifiable Credentials</h1>
           <p className="text-gray-600">Manage your digital credentials</p>
         </div>
-        <button
-          onClick={handleAddVc}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add VC
-        </button>
       </div>
 
       {error && (
@@ -124,6 +99,15 @@ const VcList = () => {
           ))}
         </div>
       )}
+
+      {/* Floating Action Button */}
+      <button
+        onClick={handleAddVc}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 z-50 flex items-center justify-center"
+        title="Add Verifiable Credential"
+      >
+        <QrCode className="h-6 w-6" />
+      </button>
     </div>
   );
 };
