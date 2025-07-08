@@ -75,9 +75,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const handleMessage = (event) => {
       // Validate origin - only accept messages from the configured parent origin
-      const allowedOrigin = process.env.PARENT_APP_ALLOWED_ORIGIN;
+      const allowedOrigin = process.env.REACT_APP_PARENT_APP_ALLOWED_ORIGIN;
       if (!allowedOrigin) {
-        console.error('PARENT_APP_ALLOWED_ORIGIN environment variable is not configured');
+        console.error('REACT_APP_PARENT_APP_ALLOWED_ORIGIN environment variable is not configured');
         return;
       }
       if (event.origin !== allowedOrigin) {
@@ -138,9 +138,9 @@ export const AuthProvider = ({ children }) => {
       const sendReadyMessage = () => {
         try {
           // Use the configured parent origin or fall back to document.referrer origin
-          const targetOrigin = process.env.PARENT_APP_ALLOWED_ORIGIN;
+          const targetOrigin = process.env.REACT_APP_PARENT_APP_ALLOWED_ORIGIN;
           if (!targetOrigin) {
-            console.error('PARENT_APP_ALLOWED_ORIGIN environment variable is not configured');
+            console.error('REACT_APP_PARENT_APP_ALLOWED_ORIGIN environment variable is not configured');
             return;
           }
           window.parent.postMessage(readyMessage, targetOrigin);
