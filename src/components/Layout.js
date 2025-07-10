@@ -21,7 +21,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Header - Hidden in embedded mode */}
       {!isEmbeddedMode && (
         <header className="bg-white shadow-sm border-b">

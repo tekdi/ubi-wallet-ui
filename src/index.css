@@ -4,9 +4,11 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
+  background: #181C44;
+  color: #181C44;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -14,4 +16,113 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Card style for login/register */
+.card {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 24px rgba(24, 28, 68, 0.08);
+  padding: 2rem 1.5rem;
+  max-width: 420px;
+}
+
+.details-card {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 24px rgba(24, 28, 68, 0.08);
+  max-width: 420px;
+}
+
+/* Input style */
+.input {
+  width: 100%;
+  padding: 1rem;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  margin-bottom: 1.25rem;
+  background: #fff;
+  color: #181C44;
+  outline: none;
+  transition: border 0.2s;
+}
+.input:focus {
+  border-color: #4B6CFA;
+}
+
+/* Button styles */
+.btn-primary {
+  width: 100%;
+  background: #4B6CFA;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 2rem;
+  padding: 0.9rem 0;
+  font-size: 1.1rem;
+  border: none;
+  margin-bottom: 1rem;
+  transition: background 0.2s;
+}
+.btn-primary:hover {
+  background: #2563eb;
+}
+
+.btn-outline {
+  width: 100%;
+  background: #fff;
+  color: #4B6CFA;
+  font-weight: 600;
+  border-radius: 2rem;
+  padding: 0.9rem 0;
+  font-size: 1.1rem;
+  border: 2px solid #4B6CFA;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-outline:hover {
+  background: #4B6CFA;
+  color: #fff;
+}
+
+/* For language selector dropdown */
+.select {
+  width: 100%;
+  padding: 1rem;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  background: #fff;
+  color: #181C44;
+  margin-bottom: 0.5rem;
+}
+
+/* For subtle helper text */
+.helper-text {
+  color: #6B7280;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+/* For page background (other than login) */
+.page-bg {
+  background: #fff;
+  min-height: 100vh;
+}
+
+/* For header bar */
+.header-bar {
+  background: #F5F6FA;
+  box-shadow: 0 2px 8px rgba(24, 28, 68, 0.04);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* For back arrow and title */
+.page-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #181C44;
+  margin-left: 0.5rem;
 } 

@@ -75,214 +75,124 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-primary-100">
-            <UserPlus className="h-6 w-6 text-primary-600" />
+    <div className="page-bg min-h-screen flex items-center justify-center">
+      <div className="card">
+        <div className="flex flex-col items-center">
+          <div className="mb-4">
+            <UserPlus className="h-12 w-12 text-accent" />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Join the platform to start managing your verifiable credentials
-          </p>
+          <h2 className="text-2xl font-bold text-navy mb-2">Register</h2>
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            {/* First Name */}
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                First Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  autoComplete="given-name"
-                  required
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter your first name"
-                />
-              </div>
-            </div>
-
-            {/* Last Name */}
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                Last Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  autoComplete="family-name"
-                  required
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter your last name"
-                />
-              </div>
-            </div>
-
-            {/* Username */}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  autoComplete="username"
-                  required
-                  value={formData.username}
-                  onChange={handleChange}
-                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="Choose a username"
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter your email"
-                />
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Phone Number
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter your phone number"
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="mt-1 appearance-none rounded-md relative block w-full pl-10 pr-10 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                  placeholder="Create a password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                >
-                  {showPassword ? (
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
-              {passwordError && (
-                <div className="mt-1 flex items-center text-sm text-red-600">
-                  <XCircle className="h-4 w-4 mr-1" />
-                  {passwordError}
-                </div>
-              )}
-              {formData.password && !passwordError && (
-                <div className="mt-1 flex items-center text-sm text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-1" />
-                  Password meets all requirements
-                </div>
-              )}
-            </div>
-          </div>
-
-          {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
-          )}
-
-          <div>
+        <form className="mt-6" onSubmit={handleSubmit}>
+          <input
+            id="firstName"
+            name="firstName"
+            type="text"
+            autoComplete="given-name"
+            required
+            value={formData.firstName}
+            onChange={handleChange}
+            className="input"
+            placeholder="First Name"
+          />
+          <input
+            id="lastName"
+            name="lastName"
+            type="text"
+            autoComplete="family-name"
+            required
+            value={formData.lastName}
+            onChange={handleChange}
+            className="input"
+            placeholder="Last Name"
+          />
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            required
+            value={formData.phone}
+            onChange={handleChange}
+            className="input"
+            placeholder="Mobile Number"
+          />
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            className="input"
+            placeholder="Email"
+          />
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autoComplete="username"
+            required
+            value={formData.username}
+            onChange={handleChange}
+            className="input"
+            placeholder="Username"
+          />
+          <div className="relative mb-4">
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              required
+              value={formData.password}
+              onChange={handleChange}
+              className="input pr-10"
+              placeholder="Create Password"
+            />
             <button
-              type="submit"
-              disabled={loading || passwordError}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              tabIndex={-1}
             >
-              {loading ? (
-                'Creating account...'
+              {showPassword ? (
+                <Lock className="h-5 w-5 text-gray-400" />
               ) : (
-                <>
-                  Create Account
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
+                <Lock className="h-5 w-5 text-gray-400" />
               )}
             </button>
           </div>
-
-          <div className="text-center">
-            <Link
-              to="/login"
-              className="inline-flex items-center font-medium text-primary-600 hover:text-primary-500"
-            >
-              <ArrowLeft className="h-4 w-4 mr-1" />
-              Already have an account? Sign in
-            </Link>
-          </div>
+          {passwordError && (
+            <div className="mt-1 flex items-center text-sm text-red-600">
+              <XCircle className="h-4 w-4 mr-1" />
+              {passwordError}
+            </div>
+          )}
+          {formData.password && !passwordError && (
+            <div className="mt-1 flex items-center text-sm text-green-600">
+              <CheckCircle className="h-4 w-4 mr-1" />
+              Password meets all requirements
+            </div>
+          )}
+          {error && (
+            <div className="text-red-600 text-sm text-center mb-2">{error}</div>
+          )}
+          <button
+            type="submit"
+            disabled={loading || passwordError}
+            className="btn-primary"
+          >
+            {loading ? 'Creating account...' : 'Register'}
+          </button>
+          <button
+            type="button"
+            className="btn-outline"
+            onClick={() => navigate('/login')}
+          >
+            Log in
+          </button>
         </form>
       </div>
     </div>
