@@ -100,7 +100,7 @@ const VcDetails = () => {
                   <div className="space-y-3">
                     {Object.entries(vc.credentialSubject).map(([key, value]) => {
                       // Skip unwanted keys
-                      const skipKeys = ['start_date', 'start_date', 'id', '@context', 'originalvc', 'originalvc1', 'issueddate', 'recordvalidupto'];
+                      const skipKeys = ['start_date', 'end_date', 'id', '@context', 'originalvc', 'originalvc1', 'issueddate', 'recordvalidupto'];
                       if (skipKeys.includes(key)) return null;
 
                       let displayValue = value;
