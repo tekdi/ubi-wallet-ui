@@ -11,7 +11,22 @@ import QrScanner from './pages/QrScanner';
 import Layout from './components/Layout';
 
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading, isEmbedded } = useAuth()
+
+  // Show loading while authentication is being determined
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">
+            {isEmbedded ? 'Waiting for authentication...' : 'Loading...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
