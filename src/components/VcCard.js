@@ -26,17 +26,15 @@ const VcCard = ({
   };
 
   const getCardClasses = () => {
-    const baseClasses = "bg-white border rounded-lg shadow-sm transition-all duration-200 cursor-pointer group";
-    
+    const baseClasses = "card transition-all duration-200 cursor-pointer group";
     if (mode === 'select') {
       return `${baseClasses} ${
         isSelected 
-          ? 'border-primary-500 shadow-md ring-2 ring-primary-200' 
-          : 'border-gray-200 hover:shadow-md'
+          ? 'border-accent shadow-md ring-2 ring-accent/20' 
+          : 'hover:shadow-md'
       }`;
     }
-    
-    return `${baseClasses} border-gray-200 hover:shadow-md`;
+    return `${baseClasses} hover:shadow-md`;
   };
 
   const renderHeader = () => {
@@ -85,7 +83,7 @@ const VcCard = ({
       className={getCardClasses()}
       onClick={handleCardClick}
     >
-      <div className="p-6">
+      <div>
         <div className="flex items-start justify-between mb-4">
           {renderHeader()}
         </div>

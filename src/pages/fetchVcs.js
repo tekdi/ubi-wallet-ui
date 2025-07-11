@@ -131,10 +131,10 @@ const FetchVcs = () => {
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div className="page-bg relative min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Select Credentials to Share</h1>
+          <h1 className="text-2xl font-bold text-navy">Select Credentials to Share</h1>
           <p className="text-gray-600">Choose the credentials you want to share with the parent application</p>
         </div>
       </div>
@@ -157,7 +157,7 @@ const FetchVcs = () => {
       {vcs.length === 0 ? (
         <div className="text-center py-12">
           <QrCode className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No credentials available</h3>
+          <h3 className="mt-2 text-sm font-medium text-navy">No credentials available</h3>
           <p className="mt-1 text-sm text-gray-500">
             You don't have any verifiable credentials to share.
           </p>
@@ -168,10 +168,10 @@ const FetchVcs = () => {
           <div className="mb-4">
             <button
               onClick={handleSelectAll}
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="btn-outline inline-flex items-center justify-center w-auto px-6 py-3"
             >
               {selectedVcs.length === vcs.length ? (
-                <CheckSquare className="h-4 w-4 mr-2 text-primary-600" />
+                <CheckSquare className="h-4 w-4 mr-2 text-accent" />
               ) : (
                 <Square className="h-4 w-4 mr-2 text-gray-400" />
               )}
@@ -201,7 +201,7 @@ const FetchVcs = () => {
                 <button
                   onClick={handleShareVcs}
                   disabled={sharing}
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                  className="btn-primary inline-flex items-center justify-center w-auto px-8 py-3"
                 >
                   {sharing ? (
                     <>
@@ -224,7 +224,7 @@ const FetchVcs = () => {
       {/* Floating Action Button */}
       <button
         onClick={handleAddVc}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 z-50 flex items-center justify-center"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-accent hover:bg-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent z-50 flex items-center justify-center"
         title="Add Verifiable Credential"
       >
         <QrCode className="h-6 w-6" />

@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
-import { ArrowLeft, FileText, User, Calendar, Shield, Copy, Check } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
+import { formatDate } from '../utils/dateUtils';
 
 const VcDetails = () => {
   const [vc, setVc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [copied, setCopied] = useState(false);
   const { vcId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -27,12 +27,6 @@ const VcDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCopy = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   if (loading) {
@@ -72,132 +66,72 @@ const VcDetails = () => {
   }
 
   return (
-    <div>
+    <div className="page-bg min-h-screen py-4 px-4">
       <div className="mb-6">
         <button
           onClick={() => navigate('/vcs')}
-          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+          className="inline-flex items-center"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to VCs
         </button>
       </div>
 
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <div className="flex items-center mb-6">
-            <div className="flex-shrink-0">
-              <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center">
-                <FileText className="h-6 w-6 text-primary-600" />
-              </div>
-            </div>
-            <div className="ml-4">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {vc.name || vc.type || 'Verifiable Credential'}
-              </h1>
-              <p className="text-gray-600">Credential Details</p>
+      <div className="details-card">
+        <div className="flex items-center m-4">
+          <div className="flex-shrink-0">
+            <div className="h-12 w-12 rounded-full bg-accent flex items-center justify-center">
+              <FileText className="h-6 w-6 text-white" />
             </div>
           </div>
+          <div className="ml-4">
+            <h1 className="text-2xl font-bold text-navy">
+              {vc.name || 'Verifiable Credential'}
+            </h1>
+            <p className="text-gray-600">Credential Details</p>
+          </div>
+        </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Credential ID</label>
-                    <div className="mt-1 flex items-center">
-                      <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-md flex-1 font-mono">
-                        {vc.id}
-                      </p>
-                      <button
-                        onClick={() => handleCopy(vc.id)}
-                        className="ml-2 p-2 text-gray-400 hover:text-gray-600"
-                      >
-                        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-6">
+            <div>
+              <div className="bg-gray-100 rounded-md p-4">
+                {vc.credentialSubject ? (
+                  <div className="space-y-3">
+                    {Object.entries(vc.credentialSubject).map(([key, value]) => {
+                      // Skip unwanted keys
+                      const skipKeys = ['start_date', 'end_date', 'id', '@context', 'originalvc', 'originalvc1', 'issueddate', 'recordvalidupto'];
+                      if (skipKeys.includes(key)) return null;
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Type</label>
-                    <p className="mt-1 text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-md">
-                      {vc.type || 'VerifiableCredential'}
-                    </p>
-                  </div>
+                      let displayValue = value;
+                      if (key === 'Expiry Date' || key === 'Issue Date') {
+                        displayValue = formatDate(value);
+                      } else if (typeof value === 'object') {
+                        displayValue = JSON.stringify(value, null, 2);
+                      }
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Issuer</label>
-                    <div className="mt-1 flex items-center">
-                      <User className="h-4 w-4 text-gray-400 mr-2" />
-                      <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-md flex-1">
-                        {vc.issuer}
-                      </p>
-                    </div>
-                  </div>
-
-                  {vc.issuedAt && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Issued Date</label>
-                      <div className="mt-1 flex items-center">
-                        <Calendar className="h-4 w-4 text-gray-400 mr-2" />
-                        <p className="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-md">
-                          {new Date(vc.issuedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Credential Subject</h3>
-                <div className="bg-gray-50 rounded-md p-4">
-                  {vc.credentialSubject ? (
-                    <div className="space-y-3">
-                      {Object.entries(vc.credentialSubject).map(([key, value]) => (
+                      return (
                         <div key={key}>
                           <label className="block text-sm font-medium text-gray-700 capitalize">
-                            {key.replace(/([A-Z])/g, ' $1').trim()}
+                            {key.replace(/([A-Z_])/g, ' $1').replace(/_/g, ' ').trim()}
                           </label>
-                          <p className="mt-1 text-sm text-gray-900">
-                            {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
+                          <p className="mt-1 text-sm text-navy break-all whitespace-pre-wrap">
+                            {displayValue}
                           </p>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500">No subject information available</p>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Verification Status</h3>
-                <div className="flex items-center">
-                  <Shield className="h-5 w-5 text-green-600 mr-2" />
-                  <span className="text-sm text-green-600 font-medium">Verified</span>
-                </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No information available</p>
+                )}
               </div>
             </div>
           </div>
-
-          {vc.rawData && (
-            <div className="mt-8">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Raw Data</h3>
-              <div className="bg-gray-900 rounded-md p-4 overflow-x-auto">
-                <pre className="text-sm text-gray-100">
-                  <code>{JSON.stringify(vc.rawData || vc, null, 2)}</code>
-                </pre>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default VcDetails; 
+export default VcDetails;
