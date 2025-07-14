@@ -85,8 +85,6 @@ export const AuthProvider = ({ children }) => {
         return;
       }
 
-      console.log('Received message from parent');
-
       if (event.data?.type === 'WALLET_AUTH' && event.data?.data) {
         const { walletToken, user: userData, embeddedMode } = event.data.data;
         if (walletToken && userData) {
@@ -118,8 +116,6 @@ export const AuthProvider = ({ children }) => {
 
           // Set token in API headers
           api.defaults.headers.common['Authorization'] = `Bearer ${walletToken}`;
-
-          console.log('Authentication data received and processed from parent window');
         }
       }
     };
@@ -144,7 +140,6 @@ export const AuthProvider = ({ children }) => {
             return;
           }
           window.parent.postMessage(readyMessage, targetOrigin);
-          console.log('Sent IFRAME_READY message to parent at origin:', targetOrigin);
         } catch (error) {
           console.error('Failed to send ready message to parent:', error);
         }
@@ -199,7 +194,7 @@ export const AuthProvider = ({ children }) => {
       return response.data;
     } catch (error) {
       // Return the error message from the response or from the thrown error
-      throw error.response?.data?.message || error.message || 'Login failed';
+      throw error.message || 'Login failed';
     }
   };
 

@@ -40,7 +40,6 @@ const QrScannerPage = () => {
 
   const handleScan = async (data) => {
     if (data && scanning) {
-      console.log('QR Code detected:', data);
       setScanning(false);
       setResult(data);
       
@@ -174,14 +173,18 @@ const QrScannerPage = () => {
         {result && !loading && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="text-center">
-              <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                QR Code Scanned Successfully!
-              </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                The credential has been added to your wallet.
-              </p>
-              
+              { !error && (
+                <p>
+                  <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    QR Code Scanned Successfully!
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    The credential has been added to your wallet.
+                  </p>
+                </p>
+              )
+              }
               <div className="space-y-3">
                 <button
                   onClick={() => navigate(sourcePage)}

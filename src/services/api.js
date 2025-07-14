@@ -37,7 +37,7 @@ export const authApi = {
       return response.data;
     } catch (error) {
       // Return the error message from the response or from the thrown error
-      throw error.response?.data?.message || error.message || 'Registration failed';
+      throw error.message || 'Registration failed';
     }
   },
 
@@ -57,7 +57,7 @@ export const authApi = {
       return response.data;
     } catch (error) {
       // Return the error message from the response or from the thrown error
-      throw error.response?.data?.message || error.message || 'Login failed';
+      throw error.message || 'Login failed';
     }
   }
 };
@@ -76,7 +76,7 @@ export const vcApi = {
 
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || 'Failed to fetch VCs';
+      throw error.message || 'Failed to fetch VCs';
     }
   },
 
@@ -92,7 +92,7 @@ export const vcApi = {
 
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || 'Failed to fetch VC';
+      throw error.message || 'Failed to fetch VC';
     }
   },
 
@@ -110,7 +110,7 @@ export const vcApi = {
 
       return response.data;
     } catch (error) {
-      throw error.response?.data?.message || 'Failed to upload VC';
+      throw error.message || 'Failed to upload VC';
     }
   }
 }; 
