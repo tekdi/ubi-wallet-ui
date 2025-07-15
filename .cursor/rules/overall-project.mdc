@@ -1,0 +1,57 @@
+# Project Strucuture
+
+ubi-wallet-ui/
+├── src/
+│   ├── components/     # Reusable UI components (Layout, VcCard)
+│   ├── contexts/       # React contexts (AuthContext)
+│   ├── pages/          # Route components (Login, Register, VcList, etc.)
+│   ├── services/       # API services (api.js)
+│   ├── utils/          # Utility functions (dateUtils.js)
+│   └── assets/         # Static assets (images)
+├── public/             # Public assets (favicon, manifest)
+└── package.json        # Dependencies & scripts
+
+# API response strure from backend APIs
+
+{
+  statusCode: number,    // HTTP status code
+  message: string,       // User-friendly message
+  data?: {              // Optional data payload
+    // ... specific data based on API object if API is supposed to return only one set of data e.g details API, array of object in case API is supposed to return multiple sets of data e.g list API
+  }
+}
+
+# CSS Tools
+- Primary: Tailwind CSS (v3.2.7) - Utility-first CSS framework
+- Build Tool: Parcel (v2.8.3) - Zero-config bundler
+- PostCSS: Autoprefixer for browser compatibility
+- Custom Theme: Navy blue (#181C44), accent blue (#4B6CFA), Poppins font
+- Responsive: Mobile-first design with Tailwind breakpoints
+
+#Key Dependencies
+- React 18.2.0, React Router DOM 6.8.0
+- Axios 1.3.0 for API calls
+- Lucide React for icons
+- ZXing for QR code scanning
+
+# Error Handling
+
+- All API calls should be wrapped in `try/catch`.
+- In the `catch` block, extract and display user-friendly error messages.
+- Use `throw error.message || 'Default message'` inside utility functions (e.g., login).
+- Avoid exposing raw server errors or stack traces directly to the UI.
+- Display errors using state variables like `setError` and show them in the UI with appropriate styling.
+- Always call `setLoading(false)` in a `finally` block after async operations.
+- When storing user info in localStorage, wrap data in JSON.stringify and handle missing/null fields gracefully.
+- Set API token using `api.defaults.headers.common['Authorization'] = Bearer <token>` after successful login.
+
+Example:
+```js
+try {
+  await login(username, password);
+  navigate('/vcs');
+} catch (err) {
+  setError(err); // Display error to user
+} finally {
+  setLoading(false); // Always stop loading
+}
