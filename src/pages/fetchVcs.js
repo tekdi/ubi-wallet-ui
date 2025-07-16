@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
 import { QrCode, CheckSquare, Square, Share, AlertCircle } from 'lucide-react';
 import VcCard from '../components/VcCard';
+import VcDetails from '../components/VcDetails';
 import { formatDate, isExpired } from '../utils/dateUtils';
 
 const FetchVcs = () => {
@@ -13,6 +14,8 @@ const FetchVcs = () => {
   const [sharing, setSharing] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [previewVcId, setPreviewVcId] = useState(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -54,6 +57,16 @@ const FetchVcs = () => {
 
   const handleAddVc = () => {
     navigate('/qr-scanner?from=/fetch-vcs');
+  };
+
+  const handlePreviewVc = (vcId) => {
+    setPreviewVcId(vcId);
+    setIsPreviewOpen(true);
+  };
+
+  const handleClosePreview = () => {
+    setIsPreviewOpen(false);
+    setPreviewVcId(null);
   };
 
   const handleShareVcs = async () => {
@@ -188,6 +201,7 @@ const FetchVcs = () => {
                 mode="select"
                 isSelected={selectedVcs.includes(vc.id)}
                 onSelectionChange={handleVcSelection}
+                onPreviewClick={handlePreviewVc}
                 formatDate={formatDate}
                 isExpired={isExpired}
               />
@@ -229,6 +243,14 @@ const FetchVcs = () => {
       >
         <QrCode className="h-6 w-6" />
       </button>
+
+      {/* VC Details Popup */}
+      <VcDetails
+        vcId={previewVcId}
+        isOpen={isPreviewOpen}
+        onClose={handleClosePreview}
+        isPopup={true}
+      />
     </div>
   );
 };
