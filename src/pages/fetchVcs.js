@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { vcApi } from '../services/api';
 import { QrCode, CheckSquare, Square, Share, AlertCircle } from 'lucide-react';
 import VcCard from '../components/VcCard';
-import VcDetailsPopup from '../components/VcDetailsPopup';
+import VcDetails from '../components/VcDetails';
 import { formatDate, isExpired } from '../utils/dateUtils';
 
 const FetchVcs = () => {
@@ -245,10 +245,11 @@ const FetchVcs = () => {
       </button>
 
       {/* VC Details Popup */}
-      <VcDetailsPopup
+      <VcDetails
         vcId={previewVcId}
         isOpen={isPreviewOpen}
         onClose={handleClosePreview}
+        isPopup={true}
       />
     </div>
   );
