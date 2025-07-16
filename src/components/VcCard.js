@@ -71,6 +71,7 @@ const VcCard = ({
             onClick={handlePreviewClick}
             className="text-gray-400 hover:text-primary-600 transition-colors p-1"
             title="Preview Credential"
+            aria-label="Preview credential"
           >
             <Eye className="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" />
           </button>
