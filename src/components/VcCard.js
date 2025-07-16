@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Calendar, CalendarDays, User, Eye, CheckSquare, Square } from 'lucide-react';
+import { FileText, Calendar, CalendarDays, User, Eye, CheckSquare, Square, EyeOff } from 'lucide-react';
 
 const VcCard = ({ 
   vc, 
@@ -7,6 +7,7 @@ const VcCard = ({
   isSelected = false,
   onCardClick,
   onSelectionChange,
+  onPreviewClick,
   formatDate,
   isExpired 
 }) => {
@@ -25,6 +26,11 @@ const VcCard = ({
     onSelectionChange?.(vc.id);
   };
 
+  const handlePreviewClick = (e) => {
+    e.stopPropagation();
+    onPreviewClick?.(vc.id);
+  };
+
   const getCardClasses = () => {
     const baseClasses = "card transition-all duration-200 cursor-pointer group";
     if (mode === 'select') {
@@ -40,25 +46,34 @@ const VcCard = ({
   const renderHeader = () => {
     if (mode === 'select') {
       return (
-        <div className="flex items-center flex-1">
-          <button
-            onClick={handleSelectionClick}
-            className="mr-3 mt-1"
-          >
-            {isSelected ? (
-              <CheckSquare className="h-5 w-5 text-primary-600" />
-            ) : (
-              <Square className="h-5 w-5 text-gray-400 group-hover:text-primary-400" />
-            )}
-          </button>
-          <div className="flex-1">
-            <div className="flex items-center">
-              <FileText className="h-5 w-5 text-primary-600 mr-2" />
-              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
-                {vc.name || 'Unnamed Credential'}
-              </h3>
+        <div className="flex items-center justify-between flex-1">
+          <div className="flex items-center flex-1">
+            <button
+              onClick={handleSelectionClick}
+              className="mr-3 mt-1"
+            >
+              {isSelected ? (
+                <CheckSquare className="h-5 w-5 text-primary-600" />
+              ) : (
+                <Square className="h-5 w-5 text-gray-400 group-hover:text-primary-400" />
+              )}
+            </button>
+            <div className="flex-1">
+              <div className="flex items-center">
+                <FileText className="h-5 w-5 text-primary-600 mr-2" />
+                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors truncate">
+                  {vc.name || 'Unnamed Credential'}
+                </h3>
+              </div>
             </div>
           </div>
+          <button
+            onClick={handlePreviewClick}
+            className="text-gray-400 hover:text-primary-600 transition-colors p-1"
+            title="Preview Credential"
+          >
+            <Eye className="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" />
+          </button>
         </div>
       );
     }
