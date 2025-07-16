@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Calendar, CalendarDays, User, Eye, CheckSquare, Square, EyeOff } from 'lucide-react';
+import { FileText, Calendar, CalendarDays, User, Eye, CheckSquare, Square } from 'lucide-react';
 
 const VcCard = ({ 
   vc, 
