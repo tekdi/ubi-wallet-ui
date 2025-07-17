@@ -52,7 +52,7 @@ const Layout = () => {
       )}
 
       {/* User Welcome Section - Hidden in embedded mode */}
-      {user && (
+      {!isEmbeddedMode && user && (
         <div className="bg-gray-50 border-b">
           <div className="max-w-4xl mx-auto px-4 py-3">
             <div className="flex items-center space-x-2">
