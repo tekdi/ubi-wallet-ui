@@ -36,8 +36,18 @@ export const authApi = {
       
       return response.data;
     } catch (error) {
-      // Return the error message from the response or from the thrown error
-      throw error.message || 'Registration failed';
+      // Handle axios errors properly
+      if (error.response) {
+        // Server responded with error status
+        const errorMessage = error.response.data?.message || 'Registration failed';
+        throw new Error(Array.isArray(errorMessage) ? errorMessage.join(', ') : errorMessage);
+      } else if (error.request) {
+        // Network error
+        throw new Error('Network error. Please check your connection.');
+      } else {
+        // Other error
+        throw new Error(error.message || 'Registration failed');
+      }
     }
   },
 

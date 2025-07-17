@@ -15,6 +15,8 @@ const Register = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
@@ -59,6 +61,10 @@ const Register = () => {
       [name]: value
     });
 
+    // Clear any existing messages when user starts typing
+    if (error) setError('');
+    if (success) setSuccess('');
+
     // Validate password in real-time
     if (name === 'password') {
       const validationError = validatePassword(value);
@@ -87,6 +93,10 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Clear any existing messages
+    setError('');
+    setSuccess('');
+    
     // Check all validations before submitting
     const passwordValidation = validatePassword(formData.password);
     const phoneValidation = validatePhone(formData.phone);
@@ -108,20 +118,61 @@ const Register = () => {
     }
 
     setLoading(true);
-    setError('');
 
     try {
-      await authApi.register(formData);
+      // Create registration data without confirmPassword
+      const registrationData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        password: formData.password,
+        email: formData.email,
+        username: formData.username
+      };
       
-      // Registration successful - redirect to login
-      navigate('/login', { 
-        state: { message: 'Registration successful! Please sign in with your credentials.' }
-      });
+      console.log('Sending registration data:', registrationData);
+      const response = await authApi.register(registrationData);
+      console.log('Registration response:', response);
+      
+      // Show success popup
+      setShowSuccessPopup(true);
+      console.log('Success popup shown');
+      
     } catch (err) {
-      setError(err);
+      console.log('Registration error:', err);
+      // Handle different types of errors
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (typeof err === 'string') {
+        errorMessage = err;
+      } else if (err?.response?.data?.message) {
+        // Handle array of error messages
+        if (Array.isArray(err.response.data.message)) {
+          errorMessage = err.response.data.message.join(', ');
+        } else {
+          errorMessage = err.response.data.message;
+        }
+      } else if (err?.message) {
+        errorMessage = err.message;
+      } else if (err?.response?.status === 409) {
+        errorMessage = 'User already exists with this username or email.';
+      } else if (err?.response?.status === 400) {
+        errorMessage = 'Invalid registration data. Please check your information.';
+      } else if (err?.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      
+      console.log('Setting error message:', errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLoginClick = () => {
+    navigate('/login', { 
+      state: { message: 'Registration successful! Please sign in with your credentials.' }
+    });
   };
 
   return (
@@ -133,6 +184,17 @@ const Register = () => {
           </div>
           <h2 className="text-2xl font-bold text-navy mb-2">Register</h2>
         </div>
+        
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center text-red-800">
+              <XCircle className="h-5 w-5 mr-2" />
+              <span className="text-sm font-medium">{error}</span>
+            </div>
+          </div>
+        )}
+        
         <form className="mt-6" onSubmit={handleSubmit}>
           <input
             id="firstName"
@@ -272,9 +334,6 @@ const Register = () => {
               Passwords match
             </div>
           )}
-          {error && (
-            <div className="text-red-600 text-sm text-center mb-2">{error}</div>
-          )}
           <button
             type="submit"
             disabled={loading || passwordError || phoneError || confirmPasswordError}
@@ -291,6 +350,31 @@ const Register = () => {
           </button>
         </form>
       </div>
+
+      {/* Success Popup Modal */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4 shadow-xl">
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4">
+                <CheckCircle className="h-16 w-16 text-green-500" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                Registration Successful!
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Your account has been created successfully. You can now log in with your credentials.
+              </p>
+              <button
+                onClick={handleLoginClick}
+                className="btn-primary w-full"
+              >
+                Go to Login
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
