@@ -129,17 +129,13 @@ const Register = () => {
         email: formData.email,
         username: formData.username
       };
-      
-      console.log('Sending registration data:', registrationData);
+
       const response = await authApi.register(registrationData);
-      console.log('Registration response:', response);
-      
+
       // Show success popup
       setShowSuccessPopup(true);
-      console.log('Success popup shown');
       
     } catch (err) {
-      console.log('Registration error:', err);
       // Handle different types of errors
       let errorMessage = 'Registration failed. Please try again.';
       
@@ -161,8 +157,7 @@ const Register = () => {
       } else if (err?.response?.status >= 500) {
         errorMessage = 'Server error. Please try again later.';
       }
-      
-      console.log('Setting error message:', errorMessage);
+
       setError(errorMessage);
     } finally {
       setLoading(false);
