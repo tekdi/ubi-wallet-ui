@@ -101,9 +101,18 @@ const Register = () => {
     const passwordValidation = validatePassword(formData.password);
     const phoneValidation = validatePhone(formData.phone);
     const confirmPasswordValidation = validateConfirmPassword(formData.confirmPassword);
-
     if (passwordValidation) {
       setPasswordError(passwordValidation);
+      return;
+    }
+    
+    if (phoneValidation) {
+      setPhoneError(phoneValidation);
+      return;
+    }
+    
+    if (confirmPasswordValidation) {
+      setConfirmPasswordError(confirmPasswordValidation);
       return;
     }
 
@@ -142,7 +151,6 @@ const Register = () => {
     } catch (err) {
       // Handle different types of errors
       let errorMessage = 'Registration failed. Please try again.';
-
       if (typeof err === 'string') {
         errorMessage = err;
       } else if (err?.response?.data?.message) {
