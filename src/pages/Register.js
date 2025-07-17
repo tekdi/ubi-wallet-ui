@@ -154,12 +154,8 @@ const Register = () => {
         }
       } else if (err?.message) {
         errorMessage = err.message;
-      } else if (err?.response?.status === 409) {
-        errorMessage = 'User already exists with this username or email.';
-      } else if (err?.response?.status === 400) {
-        errorMessage = 'Invalid registration data. Please check your information.';
-      } else if (err?.response?.status >= 500) {
-        errorMessage = 'Server error. Please try again later.';
+      } else {
+        errorMessage = 'Registration failed. Please try again.';
       }
 
       setError(errorMessage);
@@ -314,11 +310,7 @@ const Register = () => {
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
               tabIndex={-1}
             >
-              {showConfirmPassword ? (
-                <Lock className="h-5 w-5 text-gray-400" />
-              ) : (
-                <Lock className="h-5 w-5 text-gray-400" />
-              )}
+              <Lock className="h-5 w-5 text-gray-400" />
             </button>
           </div>
           {confirmPasswordError && (
