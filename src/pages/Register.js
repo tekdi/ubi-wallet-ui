@@ -9,13 +9,17 @@ const Register = () => {
     lastName: '',
     phone: '',
     password: '',
+    confirmPassword: '',
     email: '',
     username: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const validatePassword = (password) => {
@@ -33,6 +37,21 @@ const Register = () => {
     return '';
   };
 
+  const validatePhone = (phone) => {
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      return 'Mobile number must be exactly 10 digits';
+    }
+    return '';
+  };
+
+  const validateConfirmPassword = (confirmPassword) => {
+    if (confirmPassword !== formData.password) {
+      return 'Passwords do not match';
+    }
+    return '';
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -44,16 +63,47 @@ const Register = () => {
     if (name === 'password') {
       const validationError = validatePassword(value);
       setPasswordError(validationError);
+      
+      // Also validate confirm password when password changes
+      if (formData.confirmPassword) {
+        const confirmValidation = validateConfirmPassword(formData.confirmPassword);
+        setConfirmPasswordError(confirmValidation);
+      }
+    }
+
+    // Validate phone in real-time
+    if (name === 'phone') {
+      const validationError = validatePhone(value);
+      setPhoneError(validationError);
+    }
+
+    // Validate confirm password in real-time
+    if (name === 'confirmPassword') {
+      const validationError = validateConfirmPassword(value);
+      setConfirmPasswordError(validationError);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Check password validation before submitting
+    // Check all validations before submitting
     const passwordValidation = validatePassword(formData.password);
+    const phoneValidation = validatePhone(formData.phone);
+    const confirmPasswordValidation = validateConfirmPassword(formData.confirmPassword);
+    
     if (passwordValidation) {
       setPasswordError(passwordValidation);
+      return;
+    }
+    
+    if (phoneValidation) {
+      setPhoneError(phoneValidation);
+      return;
+    }
+    
+    if (confirmPasswordValidation) {
+      setConfirmPasswordError(confirmPasswordValidation);
       return;
     }
 
@@ -106,17 +156,26 @@ const Register = () => {
             className="input"
             placeholder="Last Name"
           />
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            required
-            value={formData.phone}
-            onChange={handleChange}
-            className="input"
-            placeholder="Mobile Number"
-          />
+          <div className="mb-4">
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autoComplete="tel"
+              required
+              value={formData.phone}
+              onChange={handleChange}
+              className="input"
+              placeholder="Mobile Number (10 digits)"
+              maxLength="10"
+            />
+            {phoneError && (
+              <div className="mt-1 flex items-center text-sm text-red-600">
+                <XCircle className="h-4 w-4 mr-1" />
+                {phoneError}
+              </div>
+            )}
+          </div>
           <input
             id="email"
             name="email"
@@ -176,12 +235,49 @@ const Register = () => {
               Password meets all requirements
             </div>
           )}
+          <div className="relative mb-4">
+            <input
+              id="confirmPassword"
+              name="confirmPassword"
+              type={showConfirmPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              required
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="input pr-10"
+              placeholder="Confirm Password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              tabIndex={-1}
+            >
+              {showConfirmPassword ? (
+                <Lock className="h-5 w-5 text-gray-400" />
+              ) : (
+                <Lock className="h-5 w-5 text-gray-400" />
+              )}
+            </button>
+          </div>
+          {confirmPasswordError && (
+            <div className="mt-1 flex items-center text-sm text-red-600">
+              <XCircle className="h-4 w-4 mr-1" />
+              {confirmPasswordError}
+            </div>
+          )}
+          {formData.confirmPassword && !confirmPasswordError && (
+            <div className="mt-1 flex items-center text-sm text-green-600">
+              <CheckCircle className="h-4 w-4 mr-1" />
+              Passwords match
+            </div>
+          )}
           {error && (
             <div className="text-red-600 text-sm text-center mb-2">{error}</div>
           )}
           <button
             type="submit"
-            disabled={loading || passwordError}
+            disabled={loading || passwordError || phoneError || confirmPasswordError}
             className="btn-primary"
           >
             {loading ? 'Creating account...' : 'Register'}
