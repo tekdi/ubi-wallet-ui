@@ -105,16 +105,6 @@ const Register = () => {
       setPasswordError(passwordValidation);
       return;
     }
-    
-    if (phoneValidation) {
-      setPhoneError(phoneValidation);
-      return;
-    }
-    
-    if (confirmPasswordValidation) {
-      setConfirmPasswordError(confirmPasswordValidation);
-      return;
-    }
 
     if (phoneValidation) {
       setPhoneError(phoneValidation);

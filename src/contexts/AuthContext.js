@@ -170,7 +170,8 @@ export const AuthProvider = ({ children }) => {
       }
 
       const { token: userToken, accountId } = response.data.data;
-      const { firstName, lastName, email, phone } = response?.data?.data?.user;
+      const user = response?.data?.data?.user;
+      const { firstName, lastName, email, phone } = user || {};
 
       // Create user object with all available information
       const userInfo = {
