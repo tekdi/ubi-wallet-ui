@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Wallet, User, LogOut } from 'lucide-react';
 
 const Layout = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,6 +18,14 @@ const Layout = () => {
 
   const isActive = (path) => {
     return location.pathname === path;
+  };
+
+  // Get user's full name
+  const getUserName = () => {
+    if (!user) return '';
+    const firstName = user.firstName || '';
+    const lastName = user.lastName || '';
+    return `${firstName} ${lastName}`.trim() || user.username || 'User';
   };
 
   return (
@@ -41,6 +49,20 @@ const Layout = () => {
             </div>
           </div>
         </header>
+      )}
+
+      {/* User Welcome Section - Hidden in embedded mode */}
+      {user && (
+        <div className="bg-gray-50 border-b">
+          <div className="max-w-4xl mx-auto px-4 py-3">
+            <div className="flex items-center space-x-2">
+              <User className="h-5 w-5 text-gray-600" />
+              <span className="text-gray-700 font-medium">
+                Welcome, {getUserName()}
+              </span>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Navigation */}
