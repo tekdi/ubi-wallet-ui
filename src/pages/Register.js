@@ -132,8 +132,12 @@ const Register = () => {
 
       const response = await authApi.register(registrationData);
 
-      // Show success popup
-      setShowSuccessPopup(true);
+      if (response.status === 201) {
+        // Show success popup
+        setShowSuccessPopup(true);
+      } else {
+        setError('Registration failed. Please try again.');
+      }
       
     } catch (err) {
       // Handle different types of errors
