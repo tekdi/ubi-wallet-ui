@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { authApi } from '../services/api';
-import { User, Lock, Mail, Phone, UserPlus, ArrowRight, ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
+import { Lock, UserPlus, CheckCircle, XCircle } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -92,26 +92,25 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Clear any existing messages
     setError('');
     setSuccess('');
-    
+
     // Check all validations before submitting
     const passwordValidation = validatePassword(formData.password);
     const phoneValidation = validatePhone(formData.phone);
     const confirmPasswordValidation = validateConfirmPassword(formData.confirmPassword);
-    
     if (passwordValidation) {
       setPasswordError(passwordValidation);
       return;
     }
-    
+
     if (phoneValidation) {
       setPhoneError(phoneValidation);
       return;
     }
-    
+
     if (confirmPasswordValidation) {
       setConfirmPasswordError(confirmPasswordValidation);
       return;
@@ -142,7 +141,6 @@ const Register = () => {
     } catch (err) {
       // Handle different types of errors
       let errorMessage = 'Registration failed. Please try again.';
-      
       if (typeof err === 'string') {
         errorMessage = err;
       } else if (err?.response?.data?.message) {
@@ -154,8 +152,6 @@ const Register = () => {
         }
       } else if (err?.message) {
         errorMessage = err.message;
-      } else {
-        errorMessage = 'Registration failed. Please try again.';
       }
 
       setError(errorMessage);
@@ -179,7 +175,6 @@ const Register = () => {
           </div>
           <h2 className="text-2xl font-bold text-navy mb-2">Register</h2>
         </div>
-        
         {/* Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -189,7 +184,6 @@ const Register = () => {
             </div>
           </div>
         )}
-        
         <form className="mt-6" onSubmit={handleSubmit}>
           <input
             id="firstName"

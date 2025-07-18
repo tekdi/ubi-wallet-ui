@@ -169,7 +169,9 @@ export const AuthProvider = ({ children }) => {
         throw new Error(response.data.message || 'Login failed');
       }
 
-      const { token: userToken, accountId, firstName, lastName, email, phone, username: userUsername } = response.data.data;
+      const { token: userToken, accountId } = response.data.data;
+      const user = response?.data?.data?.user;
+      const { firstName, lastName, email, phone } = user || {};
 
       // Create user object with all available information
       const userInfo = {
@@ -178,7 +180,6 @@ export const AuthProvider = ({ children }) => {
         lastName: lastName || '',
         email: email || '',
         phone: phone || '',
-        username: userUsername || username
       };
 
       // Store token and user info
