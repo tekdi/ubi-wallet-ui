@@ -131,7 +131,8 @@ const Register = () => {
 
       const response = await authApi.register(registrationData);
 
-      if (response.status === 201) {
+      // Check if registration was successful based on statusCode in response data
+      if (response.statusCode === 200) {
         // Show success popup
         setShowSuccessPopup(true);
       } else {
