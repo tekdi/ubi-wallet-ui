@@ -106,6 +106,27 @@ export const vcApi = {
     }
   },
 
+  // Get specific VC by ID
+  getVcJsonById: async (userId, vcId) => {
+    try {
+      const response = await api.get(`/api/wallet/${userId}/vc_json/${vcId}`);
+
+      if (response.data.statusCode !== 200) {
+        // Throw an error with the message from the response
+        throw new Error(response?.data?.message || 'Failed to fetch VC');
+      }
+
+      const vcDetails = {
+        vc: response.data?.data?.details?.vc,
+        vcPublicId: response.data?.data?.publicId,
+      };
+
+      return vcDetails;
+    } catch (error) {
+      throw error.message || 'Failed to fetch VC';
+    }
+  },
+
   // Upload VC from QR code
   uploadFromQr: async (userId, qrData) => {
     try {
