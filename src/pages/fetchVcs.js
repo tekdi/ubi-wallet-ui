@@ -78,15 +78,27 @@ const FetchVcs = () => {
     setSharing(true);
     setError('');
     setSuccess('');
-
+    console.log('selectedVcs', selectedVcs);
     try {
       // Fetch detailed data for selected VCs
       const selectedVcData = await Promise.all(
-        selectedVcs.map(vcId => vcApi.getVcById(user.accountId, vcId))
+        selectedVcs.map(vcId => {
+          const vc = vcs.find(v => v.id === vcId);
+
+          return vcApi.getVcJsonById(user.accountId, vc.identifier);
+        })
       );
 
       // Prepare the data to send to parent
-      const vcDataToShare = selectedVcData.map(response => response.data);
+      const vcDataToShare = selectedVcData.map(response => {
+
+        const vcDetails = response.vc;
+        return {
+          id: vcDetails.id,
+          json: vcDetails,
+          vcPublicId: response.vcPublicId,
+        };
+      });
 
       // Send data to parent window via postMessage
       if (window.parent && window.parent !== window) {
