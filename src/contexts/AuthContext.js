@@ -101,6 +101,10 @@ export const AuthProvider = ({ children }) => {
             userObject = userData;
           }
 
+          // Check if the incoming token is different from existing token
+          const existingToken = localStorage.getItem('walletToken');
+          const isNewToken = existingToken !== walletToken;
+
           // Store the authentication data in localStorage
           localStorage.setItem('walletToken', walletToken);
           localStorage.setItem('user', JSON.stringify(userObject));
@@ -116,6 +120,13 @@ export const AuthProvider = ({ children }) => {
 
           // Set token in API headers
           api.defaults.headers.common['Authorization'] = `Bearer ${walletToken}`;
+
+          // If this is a new token, reload the page to stop existing API calls
+          // and start fresh with the new authentication
+          if (isNewToken && embeddedMode) {
+            console.log('New token received, reloading page to refresh API calls');
+            window.location.reload();
+          }
         }
       }
     };
