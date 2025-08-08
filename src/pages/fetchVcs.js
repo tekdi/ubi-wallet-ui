@@ -78,7 +78,7 @@ const FetchVcs = () => {
     setSharing(true);
     setError('');
     setSuccess('');
-    console.log('selectedVcs', selectedVcs);
+
     try {
       // Fetch detailed data for selected VCs
       const selectedVcData = await Promise.all(
